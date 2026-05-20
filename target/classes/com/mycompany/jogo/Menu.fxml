@@ -6,13 +6,17 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="595.0" prefWidth="729.0" spacing="20.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.jogo.controller.MenuController">
+<VBox alignment="CENTER" prefHeight="784.0" prefWidth="1070.0" spacing="20.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.jogo.controller.MenuController">
    <children>
-      <Label text="Ecos">
+      <Label alignment="TOP_CENTER" text="Sino de Vesper">
          <font>
             <Font size="48.0" />
          </font></Label>
-      <Button fx:id="primaryButton" onAction="#switchToSecondary" text="Switch to Secondary View" />
+      <Button fx:id="jogar" onAction="#gameplay"   prefHeight="26.0" prefWidth="80.0" text="Jogar" />
+      <Button fx:id="rank" onAction="#ranking"  prefHeight="26.0" prefWidth="80.0" text="Ranking" />
+      <Button fx:id="creditos" onAction="#creditos" prefHeight="26.0" prefWidth="80.0" text="Creditos" />
+      <Button fx:id="encerrar" onAction="#encerrar" prefHeight="26.0" prefWidth="80.0" text="Encerrar" />
+      
    </children>
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

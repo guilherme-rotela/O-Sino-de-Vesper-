@@ -4,6 +4,7 @@ com/mycompany/jogo/controller/BossController.class
 com/mycompany/jogo/controller/UpgradesController.class
 com/mycompany/jogo/controller/LojaController.class
 com/mycompany/jogo/App.class
+com/mycompany/jogo/controller/RankingController.class
 module-info.class
 com/mycompany/jogo/controller/GameplayController.class
 com/mycompany/jogo/controller/MenuController.class
