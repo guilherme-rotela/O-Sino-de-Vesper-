@@ -3,6 +3,9 @@ module com.mycompany.jogo {
     requires javafx.fxml;
     requires java.base;
 
+    requires java.sql;
+    requires org.postgresql.jdbc;
+    
     opens com.mycompany.jogo to javafx.fxml;
     exports com.mycompany.jogo;
 }

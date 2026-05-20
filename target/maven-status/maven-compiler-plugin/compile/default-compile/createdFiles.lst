@@ -1,0 +1,9 @@
+com/mycompany/jogo/controller/InventarioController.class
+com/mycompany/jogo/controller/CreditosController.class
+com/mycompany/jogo/controller/BossController.class
+com/mycompany/jogo/controller/UpgradesController.class
+com/mycompany/jogo/controller/LojaController.class
+com/mycompany/jogo/App.class
+module-info.class
+com/mycompany/jogo/controller/GameplayController.class
+com/mycompany/jogo/controller/MenuController.class
