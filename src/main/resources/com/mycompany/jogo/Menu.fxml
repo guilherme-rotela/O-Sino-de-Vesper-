@@ -4,21 +4,91 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="784.0" prefWidth="1070.0" spacing="20.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.jogo.controller.MenuController">
+<VBox alignment="CENTER" prefHeight="784.0" prefWidth="1070.0" spacing="0"
+      style="-fx-background-color: #1a1a2e;"
+      xmlns="http://javafx.com/javafx/26"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.mycompany.jogo.controller.MenuController">
+
    <children>
-      <Label alignment="TOP_CENTER" text="Sino de Vesper">
-         <font>
-            <Font size="48.0" />
-         </font></Label>
-      <Button fx:id="jogar" onAction="#gameplay"   prefHeight="26.0" prefWidth="80.0" text="Jogar" />
-      <Button fx:id="rank" onAction="#ranking"  prefHeight="26.0" prefWidth="80.0" text="Ranking" />
-      <Button fx:id="creditos" onAction="#creditos" prefHeight="26.0" prefWidth="80.0" text="Creditos" />
-      <Button fx:id="encerrar" onAction="#encerrar" prefHeight="26.0" prefWidth="80.0" text="Encerrar" />
-      
+
+      <!-- Espaço superior -->
+      <Region prefHeight="120.0" />
+
+      <!-- Título principal -->
+      <Label text=" Sino de Vesper"
+             style="-fx-text-fill: #e8d5a3; -fx-font-size: 42px; -fx-font-family: 'Georgia';" />
+
+      <!-- Subtítulo decorativo -->
+      <Label text="· · · · ·"
+             style="-fx-text-fill: #4a3f6b; -fx-font-size: 18px;">
+         <VBox.margin>
+            <Insets top="4.0" bottom="30.0" />
+         </VBox.margin>
+      </Label>
+
+      <!-- Botão Jogar -->
+      <Button fx:id="jogar" onAction="#gameplay" text="JOGAR"
+              prefWidth="220.0" prefHeight="42.0"
+              style="-fx-background-color: transparent;
+                     -fx-border-color: #4a3f6b;
+                     -fx-border-radius: 4;
+                     -fx-background-radius: 4;
+                     -fx-text-fill: #d4c8f0;
+                     -fx-font-size: 14px;
+                     -fx-cursor: hand;">
+         <VBox.margin><Insets top="6.0" bottom="6.0" /></VBox.margin>
+      </Button>
+
+      <!-- Botão Ranking -->
+      <Button fx:id="rank" onAction="#ranking" text="RANKING"
+              prefWidth="220.0" prefHeight="42.0"
+              style="-fx-background-color: transparent;
+                     -fx-border-color: #4a3f6b;
+                     -fx-border-radius: 4;
+                     -fx-background-radius: 4;
+                     -fx-text-fill: #d4c8f0;
+                     -fx-font-size: 14px;
+                     -fx-cursor: hand;">
+         <VBox.margin><Insets top="6.0" bottom="6.0" /></VBox.margin>
+      </Button>
+
+      <!-- Botão Créditos -->
+      <Button fx:id="creditos" onAction="#creditos" text="CRÉDITOS"
+              prefWidth="220.0" prefHeight="42.0"
+              style="-fx-background-color: transparent;
+                     -fx-border-color: #4a3f6b;
+                     -fx-border-radius: 4;
+                     -fx-background-radius: 4;
+                     -fx-text-fill: #d4c8f0;
+                     -fx-font-size: 14px;
+                     -fx-cursor: hand;">
+         <VBox.margin><Insets top="6.0" bottom="6.0" /></VBox.margin>
+      </Button>
+
+      <!-- Espaço antes do encerrar -->
+      <Region prefHeight="16.0" />
+
+      <!-- Botão Encerrar -->
+      <Button fx:id="encerrar" onAction="#encerrar" text="ENCERRAR"
+              prefWidth="220.0" prefHeight="42.0"
+              style="-fx-background-color: transparent;
+                     -fx-border-color: #5a2a2a;
+                     -fx-border-radius: 4;
+                     -fx-background-radius: 4;
+                     -fx-text-fill: #c08080;
+                     -fx-font-size: 14px;
+                     -fx-cursor: hand;">
+         <VBox.margin><Insets top="6.0" bottom="6.0" /></VBox.margin>
+      </Button>
+
    </children>
+
    <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+      <Insets bottom="40.0" left="20.0" right="20.0" top="0.0" />
    </padding>
+
 </VBox>
