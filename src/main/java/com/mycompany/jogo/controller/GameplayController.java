@@ -4,6 +4,7 @@ package com.mycompany.jogo.controller;
 import com.mycompany.jogo.DAO.JogadorDAO;
 import com.mycompany.jogo.model.Inimigo;
 import com.mycompany.jogo.model.Jogador;
+import com.mycompany.jogo.util.SceneManager;
 import com.mycompany.jogo.util.Sessao;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
@@ -108,6 +109,106 @@ public class GameplayController implements Initializable {
             inimigos.add(ini);
         }
         emJogo = true;
+    }
+    
+    private void iniciarGameLoop() {
+        gameLoop = new AnimationTimer() {
+            @Override public void handle(long agora) {
+                if (!emJogo) return;
+                processarEntrada(agora);
+                moverInimigos();
+                verificarAtaque(agora);
+                verificarColisoes();
+                renderizar(agora);
+                atualizarHUD();
+                verificarCondicoes();
+            }
+        };
+        gameLoop.start();
+    }
+    
+    private void processarEntrada(long agora) {
+        // Esquiva (K) — dura 400ms, consome vigor
+        if (teclasPressionadas.contains(KeyCode.K) && !esquivando) {
+            Jogador j = jogador();
+            if (j.getVigorAtual() >= 20) {
+                esquivando  = true;
+                esquivaInicio = agora;
+                j.gastarVigor(20);
+            }
+        }
+        if (esquivando && agora - esquivaInicio > ESQUIVA_DURACAO) {
+            esquivando = false;
+        }
+
+        // Ataque (J)
+        if (teclasPressionadas.contains(KeyCode.J) && !atacando) {
+            atacando    = true;
+            ataqueInicio = agora;
+        }
+        if (atacando && agora - ataqueInicio > ATAQUE_DURACAO) {
+            atacando = false;
+        }
+
+        // Inventário (I)
+        if (teclasPressionadas.contains(KeyCode.I)) {
+            teclasPressionadas.remove(KeyCode.I);
+            onAbrirInventario();
+        }
+
+        // Movimento WASD
+        double speed = esquivando ? JOG_SPEED * 2.5 : JOG_SPEED;
+        double nx = jogX, ny = jogY;
+        if (teclasPressionadas.contains(KeyCode.W)) ny -= speed;
+        if (teclasPressionadas.contains(KeyCode.S)) ny += speed;
+        if (teclasPressionadas.contains(KeyCode.A)) nx -= speed;
+        if (teclasPressionadas.contains(KeyCode.D)) nx += speed;
+
+        // Limitar dentro da arena
+        nx = Math.max(JOG_SIZE, Math.min(canvasArena.getWidth()  - JOG_SIZE, nx));
+        ny = Math.max(JOG_SIZE, Math.min(canvasArena.getHeight() - JOG_SIZE, ny));
+        jogX = nx; jogY = ny;
+
+        // Recuperação passiva de vigor
+        jogador().recuperarVigor(1);
+    }
+    private void moverInimigos() {
+        for (Inimigo ini : inimigos) {
+            if (!ini.estaVivo()) continue;
+            double dx = jogX - ini.getX();
+            double dy = jogY - ini.getY();
+            double dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist > 0) {
+                ini.setX(ini.getX() + (dx / dist) * ini.getVelocidade());
+                ini.setY(ini.getY() + (dy / dist) * ini.getVelocidade());
+            }
+        }
+    }
+    
+    private void verificarAtaque(long agora) {
+        if (!atacando) return;
+        // Alcance do ataque
+        double alcance = JOG_SIZE + 30;
+        for (Inimigo ini : inimigos) {
+            if (!ini.estaVivo()) continue;
+            if (distancia(jogX, jogY, ini.getX(), ini.getY()) <= alcance) {
+                ini.receberDano(jogador().getDano());
+                if (!ini.estaVivo()) {
+                    Sessao.getInstance().registrarInimigomorto(
+                        ini.getRecompensaSangue(), ini.getRecompensaXp()
+                    );
+                }
+            }
+        }
+    }
+    
+    @FXML
+    private void onAbrirInventario() {
+        SceneManager.openNewWindow("Inventario.fxml", "Inventário — " + jogador().getNome());
+    }
+    
+    private Jogador jogador() {
+        return Sessao.getInstance().getJogadorAtual();
     }
     
     private double distancia(double x1, double y1, double x2, double y2) {
