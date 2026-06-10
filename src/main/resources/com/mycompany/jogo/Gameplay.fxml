@@ -1,30 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.geometry.*?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.mycompany.jogo.controller.GameplayController"
+      styleClass="tela-fundo"
+      prefWidth="800" prefHeight="600"
+      spacing="0">
 
-<VBox prefHeight="472.0" prefWidth="720.0" spacing="20.0" style="-fx-background-color: BLUE;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.jogo.controller.GameplayController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-    </padding>
-   <children>
-      <HBox prefHeight="116.0" prefWidth="720.0">
-         <children>
-            <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: PURPLE;">
-               <children>
-                  <Label text="Vida" />
-                  <Label prefHeight="18.0" prefWidth="84.0" style="-fx-background-color: RED;" />
-               </children>
-            </VBox>
-            <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: GREEN;">
-               <children>
-                  <Label text="Vigor" />
-                  <Label text="&gt;&gt;&gt;&gt;&gt;&gt;" />
-               </children>
-            </VBox>
-         </children>
-      </HBox>
-   </children>
+    <!-- HUD Superior -->
+    <HBox styleClass="hud-painel" spacing="24" alignment="CENTER_LEFT">
+
+        <!-- Vida -->
+        <VBox spacing="2" minWidth="160">
+            <HBox spacing="6" alignment="CENTER_LEFT">
+                <Label text="❤ VIDA" styleClass="label-info"/>
+                <Label fx:id="labelVida" text="100/100" styleClass="label-sangue"/>
+            </HBox>
+            <ProgressBar fx:id="barraVida" progress="1.0"
+                         styleClass="barra-vida" prefWidth="160" prefHeight="10"/>
+        </VBox>
+
+        <!-- Vigor -->
+        <VBox spacing="2" minWidth="160">
+            <HBox spacing="6" alignment="CENTER_LEFT">
+                <Label text="◈ VIGOR" styleClass="label-info"/>
+                <Label fx:id="labelVigor" text="100/100" styleClass="label-xp"/>
+            </HBox>
+            <ProgressBar fx:id="barraVigor" progress="1.0"
+                         styleClass="barra-vigor" prefWidth="160" prefHeight="10"/>
+        </VBox>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- Info central -->
+        <VBox alignment="CENTER" spacing="2">
+            <Label fx:id="labelFase" text="Fase 1 — Vila de Vesper" styleClass="label-fase"/>
+            <Label fx:id="labelInimigos" text="Inimigos: 0/5" styleClass="label-info"/>
+        </VBox>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- Sangue e XP -->
+        <VBox spacing="2" alignment="CENTER_RIGHT">
+            <Label fx:id="labelSangue" text="🩸 0" styleClass="label-sangue"/>
+            <Label fx:id="labelXp"     text="✦ XP: 0" styleClass="label-xp"/>
+        </VBox>
+
+        <!-- Botão inventário -->
+        <Button text="[ I ] Inventário" styleClass="btn-voltar"
+                onAction=""/>
+
+    </HBox>
+
+    <!-- Arena de jogo (Canvas) -->
+    <StackPane VBox.vgrow="ALWAYS">
+        <Canvas fx:id="canvasArena" width="800" height="490"
+                styleClass="arena-gameplay"/>
+        <!-- Overlay de mensagem (wave clear, game over etc) -->
+        <VBox fx:id="painelMensagem" alignment="CENTER" spacing="10"
+              visible="false" styleClass="tela-fundo">
+            <Label fx:id="labelMensagem" text="" styleClass="label-titulo-tela"/>
+            <Label fx:id="labelSubMensagem" text="" styleClass="label-info"/>
+            <HBox alignment="CENTER" spacing="12">
+                <Button fx:id="btnAcaoMensagem" text="Continuar"
+                        styleClass="btn-acao" onAction=""/>
+                <Button text="Menu" styleClass="btn-voltar" onAction=""/>
+            </HBox>
+        </VBox>
+    </StackPane>
+
+    <!-- Controles hint -->
+    <HBox styleClass="hud-painel" spacing="30" alignment="CENTER">
+        <Label text="WASD — Mover" styleClass="label-info"/>
+        <Label text="J — Atacar" styleClass="label-info"/>
+        <Label text="K — Esquivar" styleClass="label-info"/>
+        <Label text="I — Inventário" styleClass="label-info"/>
+    </HBox>
+
 </VBox>
