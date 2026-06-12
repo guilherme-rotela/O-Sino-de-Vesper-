@@ -1,78 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.geometry.*?>
 
-<?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.mycompany.jogo.controller.GameplayController"
+      styleClass="tela-fundo"
+      prefWidth="800" prefHeight="600"
+      spacing="0">
 
-<VBox prefHeight="600" prefWidth="800" spacing="0" styleClass="tela-fundo" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/26" fx:controller="com.mycompany.jogo.controller.GameplayController">
-
-    <!-- HUD Superior -->
-    <HBox alignment="CENTER_LEFT" spacing="24" style="-fx-background-color: #8B0000;" styleClass="hud-painel">
-
-        <!-- Vida -->
-        <VBox minWidth="160" spacing="2">
-            <HBox alignment="CENTER_LEFT" spacing="6">
-                <Label styleClass="label-info" text="❤ VIDA" textFill="WHITE" />
-                <Label fx:id="labelVida" styleClass="label-sangue" text="100/100" textFill="WHITE" />
+    <HBox styleClass="hud-painel" spacing="24" alignment="CENTER_LEFT">
+        <VBox spacing="2" minWidth="160">
+            <HBox spacing="6" alignment="CENTER_LEFT">
+                <Label text="❤ VIDA" styleClass="label-info"/>
+                <Label fx:id="labelVida" text="100/100" styleClass="label-sangue"/>
             </HBox>
-            <ProgressBar fx:id="barraVida" prefHeight="10" prefWidth="160" progress="1.0" styleClass="barra-vida" />
+            <ProgressBar fx:id="barraVida" progress="1.0"
+                         styleClass="barra-vida" prefWidth="160" prefHeight="10"/>
         </VBox>
-
-        <!-- Vigor -->
-        <VBox minWidth="160" spacing="2">
-            <HBox alignment="CENTER_LEFT" spacing="6">
-                <Label styleClass="label-info" text="◈ VIGOR" textFill="WHITE" />
-                <Label fx:id="labelVigor" styleClass="label-xp" text="100/100" textFill="WHITE" />
+        <VBox spacing="2" minWidth="160">
+            <HBox spacing="6" alignment="CENTER_LEFT">
+                <Label text="◈ VIGOR" styleClass="label-info"/>
+                <Label fx:id="labelVigor" text="100/100" styleClass="label-xp"/>
             </HBox>
-            <ProgressBar fx:id="barraVigor" prefHeight="10" prefWidth="160" progress="1.0" styleClass="barra-vigor" />
+            <ProgressBar fx:id="barraVigor" progress="1.0"
+                         styleClass="barra-vigor" prefWidth="160" prefHeight="10"/>
         </VBox>
-
-        <Region HBox.hgrow="ALWAYS" />
-
-        <!-- Info central -->
+        <Region HBox.hgrow="ALWAYS"/>
         <VBox alignment="CENTER" spacing="2">
-            <Label fx:id="labelFase" styleClass="label-fase" text="Fase 1 — Vila de Vesper" textFill="WHITE" />
-            <Label fx:id="labelInimigos" styleClass="label-info" text="Inimigos: 0/5" textFill="WHITE" />
+            <Label fx:id="labelFase" text="Fase 1 — Vila de Vesper" styleClass="label-fase"/>
+            <Label fx:id="labelInimigos" text="Inimigos: 0/5" styleClass="label-info"/>
         </VBox>
-
-        <Region HBox.hgrow="ALWAYS" />
-
-        <!-- Sangue e XP -->
-        <VBox alignment="CENTER_RIGHT" spacing="2">
-            <Label fx:id="labelSangue" styleClass="label-sangue" text="🩸 0" textFill="WHITE" />
-            <Label fx:id="labelXp" styleClass="label-xp" text="✦ XP: 0" textFill="WHITE" />
+        <Region HBox.hgrow="ALWAYS"/>
+        <VBox spacing="2" alignment="CENTER_RIGHT">
+            <Label fx:id="labelSangue" text="🩸 0" styleClass="label-sangue"/>
+            <Label fx:id="labelXp"     text="✦ XP: 0" styleClass="label-xp"/>
         </VBox>
-
-        <!-- Botão inventário -->
-        <Button onAction="" styleClass="btn-voltar" text="[ I ] Inventário" />
-
+        <Button text="[ I ] Inventário" styleClass="btn-voltar" onAction="#onAbrirInventario"/>
     </HBox>
 
-    <!-- Arena de jogo (Canvas) -->
-    <StackPane style="-fx-background-color: #131718;" VBox.vgrow="ALWAYS">
-        <Canvas fx:id="canvasArena" height="490" styleClass="arena-gameplay" width="800" />
-        <!-- Overlay de mensagem (wave clear, game over etc) -->
-        <VBox fx:id="painelMensagem" alignment="CENTER" spacing="10" styleClass="tela-fundo" visible="false">
-            <Label fx:id="labelMensagem" styleClass="label-titulo-tela" text="" />
-            <Label fx:id="labelSubMensagem" styleClass="label-info" text="" />
+    <StackPane VBox.vgrow="ALWAYS">
+        <!-- Canvas: fundo, grade, barras de vida dos inimigos, efeitos -->
+        <Canvas fx:id="canvasArena" width="800" height="490" styleClass="arena-gameplay"/>
+
+        <!-- Pane transparente para os sprites PNG dos personagens -->
+        <Pane fx:id="spritePane" mouseTransparent="true" prefWidth="800" prefHeight="490"/>
+
+        <!-- Overlay de mensagem -->
+        <VBox fx:id="painelMensagem" alignment="CENTER" spacing="10"
+              visible="false" styleClass="tela-fundo">
+            <Label fx:id="labelMensagem" text="" styleClass="label-titulo-tela"/>
+            <Label fx:id="labelSubMensagem" text="" styleClass="label-info"/>
             <HBox alignment="CENTER" spacing="12">
-                <Button fx:id="btnAcaoMensagem" onAction="" styleClass="btn-acao" text="Continuar" />
-                <Button onAction="" styleClass="btn-voltar" text="Menu" />
+                <Button fx:id="btnAcaoMensagem" text="Continuar"
+                        styleClass="btn-acao" onAction="#onAcaoMensagem"/>
+                <Button text="Menu" styleClass="btn-voltar" onAction="#onIrMenu"/>
             </HBox>
         </VBox>
     </StackPane>
 
-    <!-- Controles hint -->
-    <HBox alignment="CENTER" spacing="30" style="-fx-background-color: #63020c;" styleClass="hud-painel">
-        <Label styleClass="label-info" text="WASD — Mover" textFill="#d78b8b" />
-        <Label styleClass="label-info" text="J — Atacar" textFill="#d78b8b" />
-        <Label styleClass="label-info" text="K — Esquivar" textFill="#d78b8b" />
-        <Label styleClass="label-info" text="I — Inventário" textFill="#d78b8b" />
+    <HBox styleClass="hud-painel" spacing="30" alignment="CENTER">
+        <Label text="WASD — Mover" styleClass="label-info"/>
+        <Label text="J — Atacar" styleClass="label-info"/>
+        <Label text="K — Esquivar" styleClass="label-info"/>
+        <Label text="I — Inventário" styleClass="label-info"/>
     </HBox>
 
 </VBox>
