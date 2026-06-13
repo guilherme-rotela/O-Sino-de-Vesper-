@@ -35,28 +35,28 @@ public class Inimigo {
  
         switch (tipo) {
             case PESCADOR_FERA:
-                this.nome             = "Pescador das Trevas";
-                this.vidaMaxima       = (int)(60  * escala);
-                this.dano             = (int)(8   * escala);
-                this.velocidade       = (int)(2   * escala);
+                this.nome = "Pescador das Trevas";
+                this.vidaMaxima = (int)(60  * escala);
+                this.dano = (int)(8   * escala);
+                this.velocidade = (int)(2   * escala);
                 this.recompensaSangue = (int)(30  * escala);
-                this.recompensaXp     = (int)(20  * escala);
+                this.recompensaXp = (int)(20  * escala);
             
             case LOBISOMEM:
-                this.nome             = "Lobisomem de Vesper";
-                this.vidaMaxima       = (int)(100 * escala);
-                this.dano             = (int)(15  * escala);
-                this.velocidade       = (int)(3   * escala);
+                this.nome = "Lobisomem de Vesper";
+                this.vidaMaxima = (int)(100 * escala);
+                this.dano = (int)(15  * escala);
+                this.velocidade = (int)(3   * escala);
                 this.recompensaSangue = (int)(60  * escala);
-                this.recompensaXp     = (int)(40  * escala);
+                this.recompensaXp = (int)(40  * escala);
             
             case BOSS_CATEDRAL:
-                this.nome             = "O Sacerdote do Sino";
-                this.vidaMaxima       = (int)(500 * escala);
-                this.dano             = (int)(30  * escala);
-                this.velocidade       = 2;
+                this.nome = "O Sacerdote do Sino";
+                this.vidaMaxima = (int)(500 * escala);
+                this.dano = (int)(30  * escala);
+                this.velocidade = 2;
                 this.recompensaSangue = (int)(500 * escala);
-                this.recompensaXp     = (int)(300 * escala);
+                this.recompensaXp = (int)(300 * escala);
             
         }
         this.vidaAtual = this.vidaMaxima;
@@ -67,23 +67,101 @@ public class Inimigo {
         if (vidaAtual == 0) vivo = false;
     }
  
-    public boolean estaVivo() { return vivo; }
+    public boolean estaVivo() { 
+        return vivo; 
+    }
  
     public double getPorcentagemVida() {
         return (double) vidaAtual / vidaMaxima;
     }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public Tipo getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(Tipo tipo) {
+        this.tipo = tipo;
+    }
+
+    public int getVidaMaxima() {
+        return vidaMaxima;
+    }
+
+    public void setVidaMaxima(int vidaMaxima) {
+        this.vidaMaxima = vidaMaxima;
+    }
+
+    public int getVidaAtual() {
+        return vidaAtual;
+    }
+
+    public void setVidaAtual(int vidaAtual) {
+        this.vidaAtual = vidaAtual;
+    }
+
+    public int getDano() {
+        return dano;
+    }
+
+    public void setDano(int dano) {
+        this.dano = dano;
+    }
+
+    public int getVelocidade() {
+        return velocidade;
+    }
+
+    public void setVelocidade(int velocidade) {
+        this.velocidade = velocidade;
+    }
+
+    public int getRecompensaSangue() {
+        return recompensaSangue;
+    }
+
+    public void setRecompensaSangue(int recompensaSangue) {
+        this.recompensaSangue = recompensaSangue;
+    }
+
+    public int getRecompensaXp() {
+        return recompensaXp;
+    }
+
+    public void setRecompensaXp(int recompensaXp) {
+        this.recompensaXp = recompensaXp;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public boolean isVivo() {
+        return vivo;
+    }
+
+    public void setVivo(boolean vivo) {
+        this.vivo = vivo;
+    }
  
-    // Getters
-    public String getNome()          { return nome; }
-    public Tipo getTipo()            { return tipo; }
-    public int getVidaMaxima()       { return vidaMaxima; }
-    public int getVidaAtual()        { return vidaAtual; }
-    public int getDano()             { return dano; }
-    public int getVelocidade()       { return velocidade; }
-    public int getRecompensaSangue() { return recompensaSangue; }
-    public int getRecompensaXp()     { return recompensaXp; }
-    public double getX()             { return x; }
-    public double getY()             { return y; }
-    public void setX(double x)       { this.x = x; }
-    public void setY(double y)       { this.y = y; }
+    
 }
