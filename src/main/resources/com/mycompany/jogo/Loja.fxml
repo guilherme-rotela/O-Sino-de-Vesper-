@@ -1,11 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.jogo.controller.LojaController">
-    
-</AnchorPane>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.mycompany.jogo.controller.LojaController"
+      styleClass="tela-fundo"
+      spacing="16"
+      prefWidth="800" prefHeight="600">
+
+    <padding><Insets top="24" bottom="24" left="32" right="32"/></padding>
+
+    <!-- Cabeçalho -->
+    <HBox alignment="CENTER_LEFT" spacing="20">
+        <Label text="LOJA DE VESPER" styleClass="label-titulo-tela"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="labelSangue" text="🩸 Sangue: 0" styleClass="label-sangue"/>
+    </HBox>
+
+    <Label text="Adquira armas, armaduras e poções para sua próxima caçada."
+           styleClass="label-info"/>
+
+    <!-- Abas por tipo -->
+    <TabPane styleClass="tela-fundo" VBox.vgrow="ALWAYS">
+
+        <Tab text="⚔ ARMAS" closable="false">
+            <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                <VBox fx:id="listaArmas" spacing="10">
+                    <padding>
+                        <Insets top="10" right="0" bottom="10" left="0"/>
+                    </padding>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+        <Tab text="🛡 ARMADURAS" closable="false">
+            <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                <VBox fx:id="listaArmaduras" spacing="10" >
+                    <padding>
+                        <Insets top="10" right="0" bottom="10" left="0"/>
+                    </padding>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+        <Tab text="⚗ POÇÕES" closable="false">
+            <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                <VBox fx:id="listaPocoes" spacing="10">
+                    <padding>
+                        <Insets top="10" right="0" bottom="10" left="0"/>
+                    </padding>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+    </TabPane>
+
+    <!-- Feedback -->
+    <Label fx:id="labelFeedback" text="" styleClass="label-sangue" visible="false"/>
+
+    <!-- Rodapé -->
+    <HBox alignment="CENTER_RIGHT" spacing="12">
+        <Button text="Ver Upgrades" styleClass="btn-acao" onAction="#onIrUpgrades"/>
+        <Button text="Continuar Caçando" styleClass="btn-menu" onAction="#onContinuar"/>
+    </HBox>
+
+</VBox>

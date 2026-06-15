@@ -1,11 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.jogo.controller.UpgradesController">
-    
-</AnchorPane>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.mycompany.jogo.controller.UpgradesController"
+      styleClass="tela-fundo"
+      spacing="16"
+      prefWidth="800" prefHeight="600">
+
+    <padding><Insets top="24" bottom="24" left="32" right="32"/></padding>
+
+    <!-- Cabeçalho -->
+    <HBox alignment="CENTER_LEFT" spacing="20">
+        <Label text="MELHORIAS DO CAÇADOR" styleClass="label-titulo-tela"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <VBox alignment="CENTER_RIGHT" spacing="2">
+            <Label fx:id="labelSangueDisp" text="🩸 Sangue: 0" styleClass="label-sangue"/>
+            <Label fx:id="labelNivel" text="Nível 1" styleClass="label-xp"/>
+        </VBox>
+    </HBox>
+
+    <Label text="Gaste pontos de sangue para fortalecer seu caçador permanentemente."
+           styleClass="label-info"/>
+
+    <!-- Abas por tipo -->
+    <TabPane fx:id="tabPane" styleClass="tela-fundo" VBox.vgrow="ALWAYS">
+
+        <Tab text="⚔ TÉCNICA" closable="false">
+            <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                <VBox fx:id="listaTecnica" spacing="10">
+                    <padding>
+                        <Insets top="10" right="0" bottom="10" left="0"/>
+                    </padding>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+        <Tab text="❤ VITALIDADE" closable="false">
+            <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                <VBox fx:id="listaVitalidade" spacing="10">
+                    <padding>
+                        <Insets top="10" right="0" bottom="10" left="0"/>
+                    </padding>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+        <Tab text="◈ VIGOR" closable="false">
+            <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                <VBox fx:id="listaVigor" spacing="10">
+                    <padding>
+                        <Insets top="10" right="0" bottom="10" left="0"/>
+                    </padding>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+    </TabPane>
+
+    <!-- Rodapé -->
+    <HBox alignment="CENTER_RIGHT" spacing="12">
+        <Button text="Ir para a Loja" styleClass="btn-acao" onAction="#onIrLoja"/>
+        <Button text="Continuar Caçando" styleClass="btn-menu" onAction="#onContinuar"/>
+    </HBox>
+
+</VBox>
