@@ -1,16 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
 
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.mycompany.jogo.controller.RankingController"
+      styleClass="tela-fundo"
+      spacing="16"
+      prefWidth="800" prefHeight="600">
 
-<VBox alignment="CENTER" prefHeight="784.0" prefWidth="1070.0" spacing="20.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.jogo.controller.RankingController">
-   <children>
-      <Button fx:id="rank"  prefHeight="26.0" prefWidth="80.0" text="Ranking" />
-   </children>
-   <padding>
-   </padding>
+    <padding><Insets top="24" bottom="24" left="32" right="32"/></padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="20">
+        <Label text="RANKING DE CAÇADORES" styleClass="label-titulo-tela"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="⬇ Exportar CSV" styleClass="btn-acao" onAction="#onExportar"/>
+    </HBox>
+
+    <Label text="Os mais corajosos que ousaram entrar em Vesper." styleClass="label-info"/>
+
+    <!-- Tabela -->
+    <TableView fx:id="tabelaRanking" styleClass="tabela-ranking" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colPos"      text="#"         prefWidth="40"/>
+            <TableColumn fx:id="colNome"     text="Caçador"   prefWidth="160"/>
+            <TableColumn fx:id="colNivel"    text="Nível"     prefWidth="60"/>
+            <TableColumn fx:id="colXp"       text="XP Total"  prefWidth="100"/>
+            <TableColumn fx:id="colSangue"   text="Sangue"    prefWidth="100"/>
+            <TableColumn fx:id="colPartidas" text="Partidas"  prefWidth="80"/>
+            <TableColumn fx:id="colInimigos" text="Inimigos"  prefWidth="90"/>
+            <TableColumn fx:id="colVitorias" text="Vitórias"  prefWidth="80"/>
+        </columns>
+        <placeholder>
+            <Label text="Nenhum caçador registrado ainda." styleClass="label-info"/>
+        </placeholder>
+    </TableView>
+
+    <Label fx:id="labelExportFeedback" text="" styleClass="label-xp" visible="false"/>
+
+    <HBox alignment="CENTER_RIGHT">
+        <Button text="← Voltar ao Menu" styleClass="btn-voltar" onAction="#onVoltar"/>
+    </HBox>
+
 </VBox>

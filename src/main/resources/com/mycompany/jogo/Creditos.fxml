@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.sinodevesper.controller.CreditosController"
+      styleClass="tela-fundo"
+      alignment="CENTER"
+      spacing="18"
+      prefWidth="800" prefHeight="600">
 
-<VBox alignment="CENTER" prefHeight="784.0" prefWidth="1070.0" spacing="20.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.jogo.controller.CreditosController">
-   <padding>
-   </padding>
-   <children>
-      <Label alignment="TOP_RIGHT" prefHeight="53.0" prefWidth="328.0" text="Sino de Vesper">
-         <font>
-            <Font size="45.0" />
-         </font>
-      </Label>
-      <Label prefHeight="18.0" prefWidth="254.0" text="Creditos: Lucas Lopes e Guilherme Rotela" />
-   </children>
+    <padding><Insets top="50" bottom="50" left="100" right="100"/></padding>
+
+    <Label text="SINO DE VESPER" styleClass="titulo-jogo"/>
+    <Label text="— Créditos —" styleClass="subtitulo"/>
+
+    <Region minHeight="20"/>
+
+    <Label text="Desenvolvido por" styleClass="label-info"/>
+    <Label fx:id="labelDupla" text="Nome 1 &amp; Nome 2" styleClass="creditos-destaque"/>
+
+    <Region minHeight="10"/>
+
+    <Button text="← Voltar" styleClass="btn-voltar" onAction="#onVoltar"/>
+
 </VBox>
