@@ -1,0 +1,26 @@
+.barra-vida .bar {
+    -fx-background-color: linear-gradient(to right, #8b0000, #c0392b, #e74c3c);
+    -fx-effect: dropshadow(gaussian, rgba(231,76,60,0.7), 8, 0, 0, 0);
+}
+
+.barra-vigor .bar {
+    -fx-background-color: linear-gradient(to right, #1a3a5c, #2980b9, #3498db);
+    -fx-effect: dropshadow(gaussian, rgba(52,152,219,0.6), 8, 0, 0, 0);
+}
+
+.hud-painel {
+    -fx-background-color: linear-gradient(to bottom, #1a1010, #0f0a0a);
+    -fx-border-color: #3a2a1a;
+    -fx-border-width: 0 0 2 0;
+}
+
+.painel-mensagem {
+    -fx-background-color: rgba(10, 5, 5, 0.88);
+    -fx-border-color: #3a2a1a;
+    -fx-border-width: 2;
+}
+
+.campo-texto:focused {
+    -fx-border-color: #c8a96e;
+    -fx-effect: dropshadow(gaussian, rgba(200,169,110,0.3), 8, 0, 0, 0);
+}

@@ -8,7 +8,7 @@ public class MenuController {
 
     @FXML
     private void gameplay() throws IOException {
-        App.setRoot("Gameplay");
+        App.setRoot("NomeJogador");
     }   
     @FXML
     private void ranking() throws IOException {

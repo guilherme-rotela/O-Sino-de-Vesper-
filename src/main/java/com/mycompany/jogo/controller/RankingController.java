@@ -1,5 +1,6 @@
 package com.mycompany.jogo.controller;
 
+import com.mycompany.jogo.App;
 import com.mycompany.jogo.DAO.RankingDAO;
 import com.mycompany.jogo.model.Ranking;
 import com.mycompany.jogo.util.SceneManager;
@@ -12,6 +13,7 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
@@ -106,7 +108,8 @@ public class RankingController implements Initializable {
         }
     }
 
-    @FXML private void onVoltar() { 
-        SceneManager.navigateTo("Menu.fxml"); 
+    @FXML 
+    private void onVoltar() throws IOException { 
+        App.setRoot("menu");
     }
 }

@@ -1,11 +1,14 @@
 package com.mycompany.jogo.controller;
 
 
+import com.mycompany.jogo.App;
 import com.mycompany.jogo.DAO.JogadorDAO;
 import com.mycompany.jogo.model.Inimigo;
 import com.mycompany.jogo.model.Jogador;
 import com.mycompany.jogo.util.SceneManager;
 import com.mycompany.jogo.util.Sessao;
+import com.mycompany.jogo.util.SpriteAnimacao;
+import java.io.IOException;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,6 +23,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
 public class GameplayController implements Initializable {
@@ -37,14 +41,31 @@ public class GameplayController implements Initializable {
     private ImageView jogadorSprite;
     private final Map<Inimigo, ImageView> inimigoSprites = new LinkedHashMap<>();
     
+    
+    private Image sheetAndando;
+    private Image sheetAndandoEsquerda;
+    private Image sheetAtaque;
+    private Image sheetAtaqueEsquerda;
+
+    
+    private SpriteAnimacao animAndando;
+    private SpriteAnimacao animAndandoEsquerda;
+    private SpriteAnimacao animAtaque;
+    private SpriteAnimacao animAtaqueEsquerda;
+    
     private Image imgJogador;
     private Image imgPescador;
     private Image imgLobisomem;
+    private Image imgJogadorFrente;
+    private Image imgJogadorTras;
+    private Image imgJogadorEsquerda;
     
-    private static final double JOG_SPRITE_W  = 40;
-    private static final double JOG_SPRITE_H  = 40;
-    private static final double INIM_SPRITE_W = 36;
-    private static final double INIM_SPRITE_H = 36;
+    private String direcao = "frente";
+    
+    private static final double JOG_SPRITE_W  = 64;
+    private static final double JOG_SPRITE_H  = 64;
+    private static final double INIM_SPRITE_W = 48;
+    private static final double INIM_SPRITE_H = 48;
     
     //Estado do jogador na tela
     private double jogX, jogY;
@@ -95,20 +116,46 @@ public class GameplayController implements Initializable {
     }
     
     private void carregarImagens() {
-        imgJogador   = carregarImagem("jogador.png");
-        imgPescador  = carregarImagem("pescador.png");
+        imgJogador = carregarImagem("jogador.png");
+        imgJogadorFrente = carregarImagem("frente.png");
+        imgJogadorTras = carregarImagem("tras.png");
+        imgJogadorEsquerda = carregarImagem("esquerda.png");
+        
+        sheetAndando        = carregarImagem("andando.png");
+        sheetAndandoEsquerda = carregarImagem("andando-esquerda.png");
+        sheetAtaque         = carregarImagem("ataque.png");
+        sheetAtaqueEsquerda = carregarImagem("ataque-esquerda.png");
+        
+        if (sheetAndando != null)
+        animAndando = new SpriteAnimacao(sheetAndando, 8, 10);
+        
+        if (sheetAndandoEsquerda != null)
+        animAndandoEsquerda = new SpriteAnimacao(sheetAndandoEsquerda, 8, 10);
+
+        if (sheetAtaque != null) {
+        animAtaque = new SpriteAnimacao(sheetAtaque, 15, 20);
+        animAtaque.setLoop(false);
+        
+    }
+        if (sheetAtaqueEsquerda != null) {
+        animAtaqueEsquerda = new SpriteAnimacao(sheetAtaqueEsquerda, 15, 20);
+        animAtaqueEsquerda.setLoop(false);
+    
+    }
+
+        imgPescador = carregarImagem("pescador.png");
         imgLobisomem = carregarImagem("lobisomem.png");
     }
     
     private Image carregarImagem(String nome) {
-        try {
-            URL url = getClass().getResource("/com/sinodevesper/images/" + nome);
-            if (url != null) return new Image(url.toExternalForm());
-        } catch (Exception e) {
-            System.err.println("[GameplayController] Imagem não encontrada: " + nome);
-        }
-        return null;
+    try {
+        URL url = getClass().getResource("/com/mycompany/jogo/" + nome);
+        if (url != null) return new Image(url.toExternalForm());
+    } catch (Exception e) {
+        System.err.println("[GameplayController] Imagem não encontrada: " + nome);
     }
+    return null;
+}
     
     private ImageView criarSprite(Image img, double w, double h) {
         ImageView iv = new ImageView();
@@ -127,11 +174,12 @@ public class GameplayController implements Initializable {
 
 
     private void posicionarJogador() {
-        jogX = canvasArena.getWidth() / 2;
-        jogY = canvasArena.getHeight() / 2;
-        jogadorSprite = criarSprite(imgJogador, JOG_SPRITE_W, JOG_SPRITE_H);
-        posicionarSprite(jogadorSprite, jogX, jogY, JOG_SPRITE_W, JOG_SPRITE_H);
-        spritePane.getChildren().add(jogadorSprite);  // spritePane precisa existir no FXML
+        double W = canvasArena.getWidth();
+        double H = canvasArena.getHeight();
+        if (W == 0 || H == 0) return; 
+        jogX = W / 2;
+        jogY = H / 2;
+        
     }
 
     private void configurarTeclado() {
@@ -331,23 +379,90 @@ public class GameplayController implements Initializable {
                           (JOG_SIZE + 5) * 2, (JOG_SIZE + 5) * 2);
         }
     }
+    
+    private void configurarRedimensionamento() {
+        canvasArena.parentProperty().addListener((obs, antigo, novo) -> {
+            if (novo instanceof StackPane) {
+                StackPane sp = (StackPane) novo;
+                canvasArena.widthProperty().bind(sp.widthProperty());
+                canvasArena.heightProperty().bind(sp.heightProperty());
+                spritePane.prefWidthProperty().bind(sp.widthProperty());
+                spritePane.prefHeightProperty().bind(sp.heightProperty());
+                sp.widthProperty().addListener((o, ov, nv) -> {
+                    if (jogX == 0) posicionarJogador();
+                });
+            }
+        });
+    }
 
     private void atualizarSprites() {
-        jogadorSprite.setOpacity(esquivando ? 0.5 : 1.0);
-        posicionarSprite(jogadorSprite, jogX, jogY, JOG_SPRITE_W, JOG_SPRITE_H);
+    boolean movendo = teclasPressionadas.contains(KeyCode.W)
+                   || teclasPressionadas.contains(KeyCode.S)
+                   || teclasPressionadas.contains(KeyCode.A)
+                   || teclasPressionadas.contains(KeyCode.D);
 
-        for (Inimigo ini : inimigos) {
-            ImageView iv = inimigoSprites.get(ini);
-            if (iv == null) continue;
-            if (!ini.estaVivo()) {
-                iv.setVisible(false);
-            } else {
-                iv.setVisible(true);
-                posicionarSprite(iv, ini.getX(), ini.getY(), INIM_SPRITE_W, INIM_SPRITE_H);
-            }
+    
+    if (teclasPressionadas.contains(KeyCode.W)) direcao = "tras";
+    if (teclasPressionadas.contains(KeyCode.S)) direcao = "frente";
+    if (teclasPressionadas.contains(KeyCode.D)) direcao = "direita";
+    if (teclasPressionadas.contains(KeyCode.A)) direcao = "esquerda";
+
+    long agora = System.nanoTime();
+
+    if (atacando) {
+        // Ataque para esquerda ou direita
+        if ("esquerda".equals(direcao) && animAtaqueEsquerda != null) {
+            if (animAtaqueEsquerda.isFinalizado()) animAtaqueEsquerda.reiniciar();
+            animAtaqueEsquerda.atualizar(agora, jogadorSprite);
+        } else if (animAtaque != null) {
+            if (animAtaque.isFinalizado()) animAtaque.reiniciar();
+            animAtaque.atualizar(agora, jogadorSprite);
+        }
+
+    } else if (movendo) {
+        // Andar para esquerda ou direita
+        if ("esquerda".equals(direcao) && animAndandoEsquerda != null) {
+            animAndando.reiniciar(); // reseta o outro lado
+            animAndandoEsquerda.atualizar(agora, jogadorSprite);
+        } else if ("direita".equals(direcao) && animAndando != null) {
+            animAndandoEsquerda.reiniciar();
+            animAndando.atualizar(agora, jogadorSprite);
+        } else {
+            Image imgEstatica;
+            if ("tras".equals(direcao))    imgEstatica = imgJogadorTras;
+            else                            imgEstatica = imgJogadorFrente;
+            if (imgEstatica != null) jogadorSprite.setImage(imgEstatica);
+        }
+
+    } else {
+        // Parado — sprite estático da direção atual
+        Image imgEstatica;
+        if ("tras".equals(direcao))         imgEstatica = imgJogadorTras;
+        else if ("Frente".equals(direcao)) imgEstatica = imgJogadorFrente;
+        else if ("esquerda".equals(direcao)) imgEstatica = imgJogadorEsquerda;
+        else                                 imgEstatica = imgJogador;
+
+        if (imgEstatica != null) jogadorSprite.setImage(imgEstatica);
+
+        // Reseta animações de andar
+        if (animAndando != null)         animAndando.reiniciar();
+        if (animAndandoEsquerda != null) animAndandoEsquerda.reiniciar();
+    }
+
+    jogadorSprite.setOpacity(esquivando ? 0.5 : 1.0);
+    posicionarSprite(jogadorSprite, jogX, jogY, JOG_SPRITE_W, JOG_SPRITE_H);
+
+    // Inimigos (sem alteração)
+    for (Inimigo ini : inimigos) {
+        ImageView iv = inimigoSprites.get(ini);
+        if (iv == null) continue;
+        if (!ini.estaVivo()) iv.setVisible(false);
+        else {
+            iv.setVisible(true);
+            posicionarSprite(iv, ini.getX(), ini.getY(), INIM_SPRITE_W, INIM_SPRITE_H);
         }
     }
-    
+}
     private void verificarCondicoes() {
         Jogador j = jogador();
         if (!j.estaVivo()) {
@@ -378,16 +493,19 @@ public class GameplayController implements Initializable {
         painelMensagem.setVisible(true);
     }
 
-    @FXML private void onAcaoMensagem() {
+    @FXML private void onAcaoMensagem() throws IOException {
         painelMensagem.setVisible(false);
-        if (!jogador().estaVivo())        SceneManager.navigateTo("Upgrades.fxml");
-        else if (proximaEhBoss)           SceneManager.navigateTo("Boss.fxml");
-        else { Sessao.getInstance().avancarFase(); SceneManager.navigateTo("Loja.fxml"); }
+        if (!jogador().estaVivo())        App.setRoot("Upgrade");
+        else if (proximaEhBoss)           App.setRoot("Boss");
+        else { 
+            Sessao.getInstance().avancarFase(); 
+            App.setRoot("Loja ");
+        }
     }
     
-    @FXML private void onIrMenu() {
+    @FXML private void onIrMenu() throws IOException {
         gameLoop.stop(); salvarPartida(false);
-        SceneManager.navigateTo("MenuPrincipal.fxml");
+        App.setRoot("Menu");
     }
     
     @FXML

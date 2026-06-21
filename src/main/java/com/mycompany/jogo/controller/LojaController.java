@@ -1,11 +1,13 @@
-package com.sinodevesper.controller;
+package com.mycompany.jogo.controller;
 
+import com.mycompany.jogo.App;
 import com.mycompany.jogo.model.Jogador;
 import com.mycompany.jogo.DAO.ItemDAO;
 import com.mycompany.jogo.DAO.JogadorDAO;
 import com.mycompany.jogo.model.Item;
 import com.mycompany.jogo.util.Sessao;
 import com.mycompany.jogo.util.SceneManager;
+import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -131,12 +133,11 @@ public class LojaController implements Initializable {
         labelFeedback.setVisible(true);
     }
 
-    @FXML private void onIrUpgrades() { 
-        SceneManager.navigateTo("Upgrades.fxml"); 
+    @FXML private void onIrUpgrades() throws IOException { 
+        App.setRoot("Upgrade");
     }
-    @FXML private void onContinuar()  {
-        Sessao.getInstance().iniciarNovaRun();
-        SceneManager.navigateTo("Gameplay.fxml");
+    @FXML private void onContinuar() throws IOException  {
+        App.setRoot("Gameplay");
     }
 
     private Jogador jogador() {

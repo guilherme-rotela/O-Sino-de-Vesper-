@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import javafx.stage.StageStyle;
 
 /**
  * JavaFX App
@@ -14,6 +15,9 @@ import java.io.IOException;
 public class App extends Application {
 
     private static Scene scene;
+    
+    
+    
 
     @Override
     public void start(Stage stage) throws IOException {

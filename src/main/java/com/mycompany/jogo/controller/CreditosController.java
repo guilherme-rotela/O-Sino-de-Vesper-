@@ -1,6 +1,7 @@
 package com.mycompany.jogo.controller;
 
-import com.mycompany.jogo.util.SceneManager;
+import com.mycompany.jogo.App;
+import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -19,7 +20,7 @@ public class CreditosController implements Initializable {
     }
 
     @FXML
-    private void onVoltar() {
-        SceneManager.navigateTo("Menu.fxml");
+    private void onVoltar() throws IOException {
+        App.setRoot("menu");
     }
 }

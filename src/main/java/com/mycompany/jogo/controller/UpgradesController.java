@@ -1,11 +1,12 @@
 package com.mycompany.jogo.controller;
 
+import com.mycompany.jogo.App;
 import com.mycompany.jogo.DAO.JogadorDAO;
 import com.mycompany.jogo.DAO.UpgradeDAO;
 import com.mycompany.jogo.model.Jogador;
 import com.mycompany.jogo.model.Upgrade;
 import com.mycompany.jogo.util.Sessao;
-import com.mycompany.jogo.util.SceneManager;
+import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -123,12 +124,11 @@ public class UpgradesController implements Initializable {
         carregarUpgrades();
     }
 
-    @FXML private void onIrLoja(){
-        SceneManager.navigateTo("Loja.fxml"); 
+    @FXML private void onIrLoja() throws IOException{
+        App.setRoot("Gameplay");
     }
-    @FXML private void onContinuar() {
-        Sessao.getInstance().iniciarNovaRun();
-        SceneManager.navigateTo("Gameplay.fxml");
+    @FXML private void onContinuar() throws IOException {
+        App.setRoot("Gameplay");
     }
 
     private Jogador jogador() { 
