@@ -19,6 +19,7 @@ import javafx.scene.layout.VBox;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
+import javafx.application.Platform;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -107,14 +108,32 @@ public class GameplayController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         carregarImagens();
-        posicionarJogador();
         configurarTeclado();
-        gerarInimigos();
-        atualizarHUD();
-        iniciarGameLoop();
-        
+
+        jogadorSprite = criarSprite(imgJogador, JOG_SPRITE_W, JOG_SPRITE_H);
+        if (spritePane != null) spritePane.getChildren().add(jogadorSprite);
+
+        // Adia para depois do layout estar pronto
+        Platform.runLater(() -> {
+            configurarRedimensionamento();
+
+            if (canvasArena.getWidth() > 0) {
+                posicionarJogador();
+                gerarInimigos();
+                atualizarHUD();
+                iniciarGameLoop();
+            } else {
+                canvasArena.widthProperty().addListener((obs, oldVal, newVal) -> {
+                    if (newVal.doubleValue() > 0 && jogX == 0 && jogY == 0) {
+                        posicionarJogador();
+                        gerarInimigos();
+                        atualizarHUD();
+                        iniciarGameLoop();
+                    }
+                });
+            }
+        });
     }
-    
     private void carregarImagens() {
         imgJogador = carregarImagem("jogador.png");
         imgJogadorFrente = carregarImagem("frente.png");
@@ -183,6 +202,9 @@ public class GameplayController implements Initializable {
     }
 
     private void configurarTeclado() {
+        // Garante que o canvas existe antes de qualquer operação
+        if (canvasArena == null) return;
+
         canvasArena.sceneProperty().addListener((obs, antigo, novo) -> {
             if (novo != null) {
                 novo.setOnKeyPressed(e  -> teclasPressionadas.add(e.getCode()));
@@ -341,16 +363,21 @@ public class GameplayController implements Initializable {
         }
     }
     
-    private void configurarRedimensionamento() {
+   private void configurarRedimensionamento() {
+        if (canvasArena == null || spritePane == null) return;
+
         canvasArena.parentProperty().addListener((obs, antigo, novo) -> {
             if (novo instanceof StackPane) {
-                StackPane sp = (StackPane) novo;
+                StackPane sp = (StackPane) novo; // cast explícito para Java 11
                 canvasArena.widthProperty().bind(sp.widthProperty());
                 canvasArena.heightProperty().bind(sp.heightProperty());
                 spritePane.prefWidthProperty().bind(sp.widthProperty());
                 spritePane.prefHeightProperty().bind(sp.heightProperty());
+
                 sp.widthProperty().addListener((o, ov, nv) -> {
-                    if (jogX == 0) posicionarJogador();
+                    if (nv.doubleValue() > 0 && jogX == 0 && jogY == 0) {
+                        posicionarJogador();
+                    }
                 });
             }
         });

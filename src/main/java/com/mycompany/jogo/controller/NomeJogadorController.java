@@ -68,7 +68,9 @@ public class NomeJogadorController {
 
         task.setOnFailed(e -> {
             setControlesHabilitados(true);
-            mostrarErro("Erro ao conectar ao banco. Verifique se o PostgreSQL está rodando.");
+            mostrarErro("Erro ao conectar ao banco. Verifique se o PostgreSQL está rodando. "+e);
+            System.out.println(e);
+            
             task.getException().printStackTrace();
         });
 
