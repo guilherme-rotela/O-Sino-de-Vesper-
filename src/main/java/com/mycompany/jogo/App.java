@@ -21,8 +21,24 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("Menu"), 640, 480);
+        stage.initStyle(StageStyle.UNDECORATED);
+
+        Parent root = loadFXML("Menu");
+        scene = new Scene(root);
+
+        String css = App.class.getResource("/com/mycompany/jogo/style.css").toExternalForm();
+        scene.getStylesheets().add(css);
+
         stage.setScene(scene);
+        stage.setTitle("O Sino de Vesper");
+        stage.setMaximized(true);
+
+        scene.setOnKeyPressed(e -> {
+            if (e.getCode() == javafx.scene.input.KeyCode.ESCAPE) {
+                stage.close();
+            }
+        });
+
         stage.show();
     }
 

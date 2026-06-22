@@ -8,56 +8,60 @@
       fx:controller="com.mycompany.jogo.controller.BossController"
       styleClass="tela-fundo"
       spacing="0"
-      prefWidth="800" prefHeight="600">
+      prefWidth="1920" prefHeight="1080">
 
-    <VBox styleClass="hud-painel" spacing="6" alignment="CENTER">
+    <VBox styleClass="hud-painel" spacing="6" alignment="CENTER" minHeight="64">
         <padding><Insets top="10" bottom="10"/></padding>
-        <Label text="✝  O SACERDOTE DO SINO  ✝" styleClass="label-boss"/>
-        <HBox spacing="8" alignment="CENTER">
-            <Label text="VIDA DO BOSS:" styleClass="label-info"/>
+        <Label text="✝  O SACERDOTE DO SINO  ✝" styleClass="hud-label-fase"
+               style="-fx-font-size: 18px;"/>
+        <HBox spacing="10" alignment="CENTER">
+            <Label text="VIDA DO BOSS:" styleClass="hud-label-titulo"/>
             <ProgressBar fx:id="barraBoss" progress="1.0"
-                         styleClass="barra-vida" prefWidth="400" prefHeight="14"/>
-            <Label fx:id="labelVidaBoss" text="500/500" styleClass="label-sangue"/>
+                         styleClass="barra-vida" prefWidth="500" prefHeight="14"/>
+            <Label fx:id="labelVidaBoss" text="500/500" styleClass="hud-label-valor-vida"/>
         </HBox>
     </VBox>
 
-    <HBox styleClass="hud-painel" spacing="24" alignment="CENTER_LEFT">
-        <VBox spacing="2" minWidth="160">
-            <Label fx:id="labelVida" text="❤ 100/100" styleClass="label-sangue"/>
+    <HBox styleClass="hud-painel" spacing="32" alignment="CENTER_LEFT" minHeight="52">
+        <VBox spacing="4" minWidth="200">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="❤  VIDA" styleClass="hud-label-titulo"/>
+                <Label fx:id="labelVida" text="100/100" styleClass="hud-label-valor-vida"/>
+            </HBox>
             <ProgressBar fx:id="barraVida" progress="1.0"
-                         styleClass="barra-vida" prefWidth="160" prefHeight="8"/>
+                         styleClass="barra-vida" prefWidth="200" prefHeight="10"/>
         </VBox>
-        <VBox spacing="2" minWidth="160">
-            <Label fx:id="labelVigor" text="◈ 100/100" styleClass="label-xp"/>
+        <VBox spacing="4" minWidth="200">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="◈  VIGOR" styleClass="hud-label-titulo"/>
+                <Label fx:id="labelVigor" text="100/100" styleClass="hud-label-valor-vigor"/>
+            </HBox>
             <ProgressBar fx:id="barraVigor" progress="1.0"
-                         styleClass="barra-vigor" prefWidth="160" prefHeight="8"/>
+                         styleClass="barra-vigor" prefWidth="200" prefHeight="10"/>
         </VBox>
         <Region HBox.hgrow="ALWAYS"/>
-        <Label fx:id="labelSangue" text="🩸 0" styleClass="label-sangue"/>
+        <Label fx:id="labelSangue" text="🩸 0" styleClass="hud-label-sangue"/>
     </HBox>
 
     <StackPane VBox.vgrow="ALWAYS">
-        <!-- Canvas: fundo, grade, aura do boss, efeitos atmosféricos -->
-        <Canvas fx:id="canvasBoss" width="800" height="440" styleClass="arena-gameplay"/>
+        <Canvas fx:id="canvasBoss" styleClass="arena-gameplay"/>
+        <Pane fx:id="spritePane" mouseTransparent="true"/>
 
-        <!-- Pane transparente para os sprites PNG (jogador, boss, projétil) -->
-        <Pane fx:id="spritePane" mouseTransparent="true" prefWidth="800" prefHeight="440"/>
-
-        <!-- Overlay de resultado -->
-        <VBox fx:id="painelResultado" alignment="CENTER" spacing="16"
-              visible="false" styleClass="tela-fundo">
-            <Label fx:id="labelResultado" text="" styleClass="label-boss"/>
-            <Label fx:id="labelResultadoDesc" text="" styleClass="label-info" wrapText="true"
-                   textAlignment="CENTER" maxWidth="500"/>
-            <Button fx:id="btnResultado" text="Continuar" styleClass="btn-menu"
-                    onAction="#onContinuarAposResultado"/>
+        <VBox fx:id="painelResultado" alignment="CENTER" spacing="20"
+              visible="false" styleClass="painel-mensagem">
+            <Label fx:id="labelResultado" text="" styleClass="msg-titulo"/>
+            <Label fx:id="labelResultadoDesc" text="" styleClass="msg-sub"
+                   wrapText="true" textAlignment="CENTER" maxWidth="500"/>
+            <Button fx:id="btnResultado" text="Continuar"
+                    styleClass="btn-acao" onAction="#onContinuarAposResultado"/>
         </VBox>
     </StackPane>
 
-    <HBox styleClass="hud-painel" spacing="30" alignment="CENTER">
-        <Label text="WASD — Mover" styleClass="label-info"/>
-        <Label text="J — Atacar" styleClass="label-info"/>
-        <Label text="K — Esquivar" styleClass="label-info"/>
+    <HBox styleClass="hud-rodape" spacing="40" alignment="CENTER" minHeight="36">
+        <Label text="WASD  Mover"  styleClass="hud-controle"/>
+        <Label text="J  Atacar"     styleClass="hud-controle"/>
+        <Label text="K  Esquivar"   styleClass="hud-controle"/>
+        <Label text="ESC  Sair"     styleClass="hud-controle"/>
     </HBox>
 
 </VBox>

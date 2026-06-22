@@ -341,6 +341,21 @@ public class GameplayController implements Initializable {
         }
     }
     
+    private void configurarRedimensionamento() {
+        canvasArena.parentProperty().addListener((obs, antigo, novo) -> {
+            if (novo instanceof StackPane) {
+                StackPane sp = (StackPane) novo;
+                canvasArena.widthProperty().bind(sp.widthProperty());
+                canvasArena.heightProperty().bind(sp.heightProperty());
+                spritePane.prefWidthProperty().bind(sp.widthProperty());
+                spritePane.prefHeightProperty().bind(sp.heightProperty());
+                sp.widthProperty().addListener((o, ov, nv) -> {
+                    if (jogX == 0) posicionarJogador();
+                });
+            }
+        });
+    }
+    
     private void renderizar(long agora) {
         GraphicsContext gc = canvasArena.getGraphicsContext2D();
         double W = canvasArena.getWidth(), H = canvasArena.getHeight();
@@ -380,20 +395,6 @@ public class GameplayController implements Initializable {
         }
     }
     
-    private void configurarRedimensionamento() {
-        canvasArena.parentProperty().addListener((obs, antigo, novo) -> {
-            if (novo instanceof StackPane) {
-                StackPane sp = (StackPane) novo;
-                canvasArena.widthProperty().bind(sp.widthProperty());
-                canvasArena.heightProperty().bind(sp.heightProperty());
-                spritePane.prefWidthProperty().bind(sp.widthProperty());
-                spritePane.prefHeightProperty().bind(sp.heightProperty());
-                sp.widthProperty().addListener((o, ov, nv) -> {
-                    if (jogX == 0) posicionarJogador();
-                });
-            }
-        });
-    }
 
     private void atualizarSprites() {
     boolean movendo = teclasPressionadas.contains(KeyCode.W)

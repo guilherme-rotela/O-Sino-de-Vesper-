@@ -1,1 +1,96 @@
+CREATE TABLE jogadores (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL UNIQUE,
+    criado_em TIMESTAMP DEFAULT NOW()
+);
+ 
+CREATE TABLE upgrades (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL,
+    descricao TEXT,
+    tipo VARCHAR(20) NOT NULL, 
+    custo_sangue INT NOT NULL,
+    bonus_valor INT NOT NULL
+);
+ 
+CREATE TABLE jogador_upgrades (
+    id SERIAL PRIMARY KEY,
+    jogador_id INT REFERENCES jogadores(id) ON DELETE CASCADE,
+    upgrade_id INT REFERENCES upgrades(id),
+    quantidade INT DEFAULT 1,
+    UNIQUE(jogador_id, upgrade_id)
+);
 
+CREATE TABLE jogador_atributos (
+    id SERIAL PRIMARY KEY,
+    jogador_id INT REFERENCES jogadores(id) ON DELETE CASCADE UNIQUE,
+    vitalidade INT DEFAULT 10,
+    vigor INT DEFAULT 10,
+    tecnica INT DEFAULT 10,
+    pontos_sangue INT DEFAULT 0,
+    total_xp INT DEFAULT 0,
+    nivel INT DEFAULT 1
+);
+ 
+CREATE TABLE itens_loja (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL,
+    descricao TEXT,
+    tipo VARCHAR(20) NOT NULL,
+    custo_sangue INT NOT NULL,
+    bonus_atributo VARCHAR(20),
+    bonus_valor INT DEFAULT 0
+);
+ 
+CREATE TABLE inventario (
+    id SERIAL PRIMARY KEY,
+    jogador_id INT REFERENCES jogadores(id) ON DELETE CASCADE,
+    item_id INT REFERENCES itens_loja(id),
+    quantidade INT DEFAULT 1
+);
+ 
+CREATE TABLE partidas (
+    id SERIAL PRIMARY KEY,
+    jogador_id INT REFERENCES jogadores(id) ON DELETE CASCADE,
+    fase_alcancada INT DEFAULT 1,
+    inimigos_mortos INT DEFAULT 0,
+    sangue_ganho INT DEFAULT 0,
+    xp_ganho INT DEFAULT 0,
+    vitoria BOOLEAN DEFAULT FALSE,
+    jogada_em TIMESTAMP DEFAULT NOW()
+);
+ 
+CREATE VIEW ranking AS
+SELECT
+    j.nome,
+    ja.nivel,
+    ja.total_xp,
+    ja.pontos_sangue,
+    COUNT(p.id) AS total_partidas,
+    COALESCE(SUM(p.inimigos_mortos), 0) AS total_inimigos_mortos,
+    COALESCE(SUM(CASE WHEN p.vitoria THEN 1 ELSE 0 END), 0) AS vitorias
+FROM jogadores j
+JOIN jogador_atributos ja ON j.id = ja.jogador_id
+LEFT JOIN partidas p ON j.id = p.jogador_id
+GROUP BY j.nome, ja.nivel, ja.total_xp, ja.pontos_sangue
+ORDER BY ja.total_xp DESC;
+ 
+INSERT INTO upgrades (nome, descricao, tipo, custo_sangue, bonus_valor) VALUES
+('Vitalidade I',    'Aumenta vida máxima em 20',       'vitalidade', 100, 20),
+('Vitalidade II',   'Aumenta vida máxima em 40',       'vitalidade', 250, 40),
+('Vitalidade III',  'Aumenta vida máxima em 60',       'vitalidade', 500, 60),
+('Vigor I',         'Aumenta vigor máximo em 20',      'vigor',      100, 20),
+('Vigor II',        'Aumenta vigor máximo em 40',      'vigor',      250, 40),
+('Vigor III',       'Aumenta vigor máximo em 60',      'vigor',      500, 60),
+('Técnica I',       'Aumenta dano de ataque em 5',     'tecnica',    100, 5),
+('Técnica II',      'Aumenta dano de ataque em 10',    'tecnica',    250, 10),
+('Técnica III',     'Aumenta dano de ataque em 15',    'tecnica',    500, 15);
+ 
+INSERT INTO itens_loja (nome, descricao, tipo, custo_sangue, bonus_atributo, bonus_valor) VALUES
+('Faca de Caçador',    'Arma inicial de Vesper',           'arma',    50,  'tecnica',   5),
+('Lança Enferrujada',  'Arma longa de pescador',           'arma',    120, 'tecnica',   12),
+('Machado da Igreja',  'Arma sagrada da catedral',         'arma',    300, 'tecnica',   25),
+('Roupa de Caçador',   'Armadura leve padrão',             'armadura',80,  'vitalidade',10),
+('Cota de Malha',      'Proteção de ferro envelhecido',    'armadura',200, 'vitalidade',25),
+('Poção de Sangue',    'Restaura 50 pontos de vida',       'pocao',   40,  'vitalidade',50),
+('Poção de Vigor',     'Restaura vigor completamente',     'pocao',   60,  'vigor',     100);

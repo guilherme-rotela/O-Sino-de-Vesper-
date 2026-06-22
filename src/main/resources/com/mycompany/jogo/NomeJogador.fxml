@@ -8,9 +8,9 @@
       styleClass="tela-fundo"
       alignment="CENTER"
       spacing="20"
-      prefWidth="800" prefHeight="600">
+      prefWidth="1920" prefHeight="1080">
 
-    <padding><Insets top="80" bottom="80" left="160" right="160"/></padding>
+    <padding><Insets top="80" bottom="80" left="360" right="360"/></padding>
 
     <Label text="QUEM ÉS TU, CAÇADOR?" styleClass="label-titulo-tela"/>
 
@@ -19,7 +19,8 @@
     <TextField fx:id="campoNome"
                styleClass="campo-texto"
                promptText="Nome do caçador..."
-               onAction="#onConfirmar"/>
+               onAction="#onConfirmar"
+               maxWidth="400"/>
 
     <Label fx:id="labelErro" styleClass="label-sangue" text="" visible="false"/>
 
@@ -29,6 +30,6 @@
     </HBox>
 
     <Label text="Se já jogou antes, seu progresso será carregado automaticamente."
-           styleClass="label-info" wrapText="true" textAlignment="CENTER"/>
+           styleClass="label-info" wrapText="true" textAlignment="CENTER" maxWidth="480"/>
 
 </VBox>
