@@ -58,10 +58,14 @@ public class UpgradesController implements Initializable {
                 switch (up.getTipo()) {
                     case "tecnica":
                         listaTecnica.getChildren().add(card);
+                        break;
                     case "vitalidade":
                         listaVitalidade.getChildren().add(card);
+                        break;
                     case "vigor":
                         listaVigor.getChildren().add(card);
+                        break;
+                        
                 }
             }
         } catch (SQLException e) {
@@ -104,10 +108,13 @@ public class UpgradesController implements Initializable {
         switch (up.getTipo()) {
             case "vitalidade":
                 j.aumentarVitalidade(up.getBonusValor());
+                break;
             case "vigor":
                 j.aumentarVigor(up.getBonusValor());
+                break;
             case "tecnica": 
                 j.aumentarTecnica(up.getBonusValor());
+                break;
         }
 
         try {

@@ -44,27 +44,30 @@ public class LojaController implements Initializable {
     }
 
     private void carregarItens() {
-        try {
-            List<Item> itens = itemDAO.listarLoja();
-            listaArmas.getChildren().clear();
-            listaArmaduras.getChildren().clear();
-            listaPocoes.getChildren().clear();
+    try {
+        List<Item> itens = itemDAO.listarLoja();
+        listaArmas.getChildren().clear();
+        listaArmaduras.getChildren().clear();
+        listaPocoes.getChildren().clear();
 
-            for (Item item : itens) {
-                VBox card = criarCard(item);
-                switch (item.getTipo()) {
-                    case ARMA: 
-                        listaArmas.getChildren().add(card);
-                    case ARMADURA:
-                        listaArmaduras.getChildren().add(card);
-                    case POCAO: 
-                        listaPocoes.getChildren().add(card);
-                }
+        for (Item item : itens) {
+            VBox card = criarCard(item);
+            switch (item.getTipo()) {
+                case ARMA: 
+                    listaArmas.getChildren().add(card);
+                    break;
+                case ARMADURA:
+                    listaArmaduras.getChildren().add(card);
+                    break;
+                case POCAO: 
+                    listaPocoes.getChildren().add(card);
+                    break;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+}
 
     private VBox criarCard(Item item) {
         VBox card = new VBox(4);
@@ -111,8 +114,10 @@ public class LojaController implements Initializable {
             switch (item.getBonusAtributo()) {
                 case "vitalidade":
                     j.curar(item.getBonusValor());
+                    break;
                 case "vigor": 
                     j.recuperarVigor(item.getBonusValor());
+                    break;
             }
         }
 
@@ -134,7 +139,7 @@ public class LojaController implements Initializable {
     }
 
     @FXML private void onIrUpgrades() throws IOException { 
-        App.setRoot("Upgrade");
+        App.setRoot("Upgrades");
     }
     @FXML private void onContinuar() throws IOException  {
         App.setRoot("Gameplay");

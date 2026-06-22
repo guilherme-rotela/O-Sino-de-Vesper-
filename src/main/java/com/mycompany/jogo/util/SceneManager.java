@@ -4,8 +4,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 import java.io.IOException;
+import java.net.URL;
 
 public class SceneManager {
 
@@ -19,16 +19,30 @@ public class SceneManager {
         return primaryStage;
     }
 
+    private static URL resolverFxml(String fxmlPath) {
+        URL url = SceneManager.class.getResource("/com/mycompany/jogo/" + fxmlPath);
+        if (url == null) {
+            System.err.println("[SceneManager] FXML não encontrado: /com/mycompany/jogo/" + fxmlPath);
+        }
+        return url;
+    }
+
+    private static URL resolverCss() {
+        return SceneManager.class.getResource("/com/mycompany/jogo/style.css");
+    }
+
     public static void navigateTo(String fxmlPath) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                SceneManager.class.getResource("/com/sinodevesper/fxml/" + fxmlPath)
-            );
+            URL fxmlUrl = resolverFxml(fxmlPath);
+            if (fxmlUrl == null) return;
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
             Scene scene = new Scene(root);
-            scene.getStylesheets().add(
-                SceneManager.class.getResource("/com/sinodevesper/css/style.css").toExternalForm()
-            );
+
+            URL cssUrl = resolverCss();
+            if (cssUrl != null) scene.getStylesheets().add(cssUrl.toExternalForm());
+
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (IOException e) {
@@ -38,14 +52,16 @@ public class SceneManager {
 
     public static <T> T navigateToWithController(String fxmlPath) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                SceneManager.class.getResource("/com/sinodevesper/fxml/" + fxmlPath)
-            );
+            URL fxmlUrl = resolverFxml(fxmlPath);
+            if (fxmlUrl == null) return null;
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
             Scene scene = new Scene(root);
-            scene.getStylesheets().add(
-                SceneManager.class.getResource("/com/sinodevesper/css/style.css").toExternalForm()
-            );
+
+            URL cssUrl = resolverCss();
+            if (cssUrl != null) scene.getStylesheets().add(cssUrl.toExternalForm());
+
             primaryStage.setScene(scene);
             primaryStage.show();
             return loader.getController();
@@ -57,15 +73,18 @@ public class SceneManager {
 
     public static void openNewWindow(String fxmlPath, String titulo) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                SceneManager.class.getResource("/com/sinodevesper/fxml/" + fxmlPath)
-            );
+            URL fxmlUrl = resolverFxml(fxmlPath);
+            if (fxmlUrl == null) return;
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
+
             Stage stage = new Stage();
             Scene scene = new Scene(root);
-            scene.getStylesheets().add(
-                SceneManager.class.getResource("/com/sinodevesper/css/style.css").toExternalForm()
-            );
+
+            URL cssUrl = resolverCss();
+            if (cssUrl != null) scene.getStylesheets().add(cssUrl.toExternalForm());
+
             stage.setScene(scene);
             stage.setTitle(titulo);
             stage.show();
@@ -74,4 +93,3 @@ public class SceneManager {
         }
     }
 }
-

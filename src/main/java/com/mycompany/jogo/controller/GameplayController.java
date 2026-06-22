@@ -74,7 +74,7 @@ public class GameplayController implements Initializable {
     private static final double JOG_SPEED = 3.0;
     private boolean esquivando = false;
     private long esquivaInicio = 0;
-    private static final long ESQUIVA_DURACAO = 400_000_000L; // 400ms em nanos
+    private static final long ESQUIVA_DURACAO = 400_000_000L;
 
     //Ataque
     private boolean atacando = false;
@@ -105,76 +105,91 @@ public class GameplayController implements Initializable {
 
     private final JogadorDAO jogadorDAO = new JogadorDAO();
 
+    // Flag para evitar inicialização dupla
+    private boolean inicializado = false;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         carregarImagens();
-        configurarTeclado();
 
         jogadorSprite = criarSprite(imgJogador, JOG_SPRITE_W, JOG_SPRITE_H);
         if (spritePane != null) spritePane.getChildren().add(jogadorSprite);
 
-        // Adia para depois do layout estar pronto
         Platform.runLater(() -> {
             configurarRedimensionamento();
+            configurarTeclado();  // mover aqui garante que a Scene já existe
+            tentarIniciar();
+        });
+    }
 
-            if (canvasArena.getWidth() > 0) {
+    /**
+     * Tenta iniciar o jogo assim que o canvas tiver tamanho válido.
+     * Pode ser chamado múltiplas vezes — a flag "inicializado" evita duplicação.
+     */
+    private void tentarIniciar() {
+        double W = canvasArena.getWidth();
+        double H = canvasArena.getHeight();
+
+        if (W > 0 && H > 0) {
+            if (!inicializado) {
+                inicializado = true;
                 posicionarJogador();
                 gerarInimigos();
                 atualizarHUD();
+                atualizarLabelFase();
                 iniciarGameLoop();
-            } else {
-                canvasArena.widthProperty().addListener((obs, oldVal, newVal) -> {
-                    if (newVal.doubleValue() > 0 && jogX == 0 && jogY == 0) {
-                        posicionarJogador();
-                        gerarInimigos();
-                        atualizarHUD();
-                        iniciarGameLoop();
-                    }
-                });
+                // Garante foco para capturar teclado
+                canvasArena.requestFocus();
             }
-        });
+        } else {
+            // Aguarda o canvas receber seu tamanho real
+            canvasArena.widthProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal.doubleValue() > 0 && !inicializado) {
+                    tentarIniciar();
+                }
+            });
+        }
     }
+
     private void carregarImagens() {
-        imgJogador = carregarImagem("jogador.png");
-        imgJogadorFrente = carregarImagem("frente.png");
-        imgJogadorTras = carregarImagem("tras.png");
+        imgJogador         = carregarImagem("jogador.png");
+        imgJogadorFrente   = carregarImagem("frente.png");
+        imgJogadorTras     = carregarImagem("tras.png");
         imgJogadorEsquerda = carregarImagem("esquerda.png");
         
-        sheetAndando        = carregarImagem("andando.png");
+        sheetAndando         = carregarImagem("andando.png");
         sheetAndandoEsquerda = carregarImagem("andando-esquerda.png");
-        sheetAtaque         = carregarImagem("ataque.png");
-        sheetAtaqueEsquerda = carregarImagem("ataque-esquerda.png");
+        sheetAtaque          = carregarImagem("ataque.png");
+        sheetAtaqueEsquerda  = carregarImagem("ataque-esquerda.png");
         
         if (sheetAndando != null)
-        animAndando = new SpriteAnimacao(sheetAndando, 8, 10);
+            animAndando = new SpriteAnimacao(sheetAndando, 8, 10);
         
         if (sheetAndandoEsquerda != null)
-        animAndandoEsquerda = new SpriteAnimacao(sheetAndandoEsquerda, 8, 10);
+            animAndandoEsquerda = new SpriteAnimacao(sheetAndandoEsquerda, 8, 10);
 
         if (sheetAtaque != null) {
-        animAtaque = new SpriteAnimacao(sheetAtaque, 15, 20);
-        animAtaque.setLoop(false);
-        
-    }
+            animAtaque = new SpriteAnimacao(sheetAtaque, 15, 20);
+            animAtaque.setLoop(false);
+        }
         if (sheetAtaqueEsquerda != null) {
-        animAtaqueEsquerda = new SpriteAnimacao(sheetAtaqueEsquerda, 15, 20);
-        animAtaqueEsquerda.setLoop(false);
-    
-    }
+            animAtaqueEsquerda = new SpriteAnimacao(sheetAtaqueEsquerda, 15, 20);
+            animAtaqueEsquerda.setLoop(false);
+        }
 
-        imgPescador = carregarImagem("pescador.png");
+        imgPescador  = carregarImagem("pescador.png");
         imgLobisomem = carregarImagem("lobisomem.png");
     }
     
     private Image carregarImagem(String nome) {
-    try {
-        URL url = getClass().getResource("/com/mycompany/jogo/" + nome);
-        if (url != null) return new Image(url.toExternalForm());
-    } catch (Exception e) {
-        System.err.println("[GameplayController] Imagem não encontrada: " + nome);
+        try {
+            URL url = getClass().getResource("/com/mycompany/jogo/" + nome);
+            if (url != null) return new Image(url.toExternalForm());
+        } catch (Exception e) {
+            System.err.println("[GameplayController] Imagem não encontrada: " + nome);
+        }
+        return null;
     }
-    return null;
-}
     
     private ImageView criarSprite(Image img, double w, double h) {
         ImageView iv = new ImageView();
@@ -191,38 +206,52 @@ public class GameplayController implements Initializable {
         iv.setLayoutY(cy - h / 2.0);
     }
 
-
     private void posicionarJogador() {
         double W = canvasArena.getWidth();
         double H = canvasArena.getHeight();
         if (W == 0 || H == 0) return; 
         jogX = W / 2;
         jogY = H / 2;
-        
     }
 
     private void configurarTeclado() {
-        // Garante que o canvas existe antes de qualquer operação
         if (canvasArena == null) return;
 
-        canvasArena.sceneProperty().addListener((obs, antigo, novo) -> {
-            if (novo != null) {
-                novo.setOnKeyPressed(e  -> teclasPressionadas.add(e.getCode()));
-                novo.setOnKeyReleased(e -> teclasPressionadas.remove(e.getCode()));
-                canvasArena.requestFocus();
-            }
-        });
+        // Registra nas teclas se a Scene já está disponível
+        if (canvasArena.getScene() != null) {
+            registrarTeclas(canvasArena.getScene());
+        } else {
+            // Aguarda a Scene ser atribuída
+            canvasArena.sceneProperty().addListener((obs, antigo, novo) -> {
+                if (novo != null) registrarTeclas(novo);
+            });
+        }
         canvasArena.setFocusTraversable(true);
+        canvasArena.requestFocus();
+    }
+
+    private void registrarTeclas(javafx.scene.Scene scene) {
+        scene.setOnKeyPressed(e  -> teclasPressionadas.add(e.getCode()));
+        scene.setOnKeyReleased(e -> teclasPressionadas.remove(e.getCode()));
+        canvasArena.requestFocus();
     }
 
     private void gerarInimigos() {
+        // Limpa inimigos e sprites anteriores (exceto o jogador)
+        for (ImageView iv : inimigoSprites.values()) {
+            spritePane.getChildren().remove(iv);
+        }
+        inimigoSprites.clear();
         inimigos.clear();
-        Jogador j = Sessao.getInstance().getJogadorAtual();
+
+        Jogador j  = Sessao.getInstance().getJogadorAtual();
         int fase   = Sessao.getInstance().getFaseAtual();
         Random rng = new Random();
 
+        double W = canvasArena.getWidth();
+        double H = canvasArena.getHeight();
+
         for (int i = 0; i < INIMIGOS_POR_FASE; i++) {
-            // Fase 3+ inclui lobisomens
             Inimigo.Tipo tipo = (fase >= 3 && rng.nextBoolean())
                 ? Inimigo.Tipo.LOBISOMEM : Inimigo.Tipo.PESCADOR_FERA;
             Inimigo ini = new Inimigo(tipo, fase);
@@ -230,11 +259,14 @@ public class GameplayController implements Initializable {
             // Posição aleatória longe do jogador
             double x, y;
             do {
-                x = 40 + rng.nextDouble() * (canvasArena.getWidth()  - 80);
-                y = 40 + rng.nextDouble() * (canvasArena.getHeight() - 80);
+                x = 60 + rng.nextDouble() * (W - 120);
+                y = 60 + rng.nextDouble() * (H - 120);
             } while (distancia(x, y, jogX, jogY) < 150);
-            ini.setX(x); ini.setY(y);
+
+            ini.setX(x);
+            ini.setY(y);
             inimigos.add(ini);
+
             Image imgIni = tipo == Inimigo.Tipo.LOBISOMEM ? imgLobisomem : imgPescador;
             ImageView iv = criarSprite(imgIni, INIM_SPRITE_W, INIM_SPRITE_H);
             posicionarSprite(iv, x, y, INIM_SPRITE_W, INIM_SPRITE_H);
@@ -242,10 +274,10 @@ public class GameplayController implements Initializable {
             inimigoSprites.put(ini, iv);
         }
         emJogo = true;
-        atualizarLabelFase();
     }
     
     private void iniciarGameLoop() {
+        if (gameLoop != null) gameLoop.stop();
         gameLoop = new AnimationTimer() {
             @Override public void handle(long agora) {
                 if (!emJogo) return;
@@ -263,11 +295,11 @@ public class GameplayController implements Initializable {
     }
     
     private void processarEntrada(long agora) {
-        // Esquiva (K) — dura 400ms, consome vigor
+        // Esquiva (K)
         if (teclasPressionadas.contains(KeyCode.K) && !esquivando) {
             Jogador j = jogador();
             if (j.getVigorAtual() >= 20) {
-                esquivando  = true;
+                esquivando    = true;
                 esquivaInicio = agora;
                 j.gastarVigor(20);
             }
@@ -278,7 +310,7 @@ public class GameplayController implements Initializable {
 
         // Ataque (J)
         if (teclasPressionadas.contains(KeyCode.J) && !atacando) {
-            atacando    = true;
+            atacando     = true;
             ataqueInicio = agora;
         }
         if (atacando && agora - ataqueInicio > ATAQUE_DURACAO) {
@@ -299,19 +331,19 @@ public class GameplayController implements Initializable {
         if (teclasPressionadas.contains(KeyCode.A)) nx -= speed;
         if (teclasPressionadas.contains(KeyCode.D)) nx += speed;
 
-        // Limitar dentro da arena
         nx = Math.max(JOG_SIZE, Math.min(canvasArena.getWidth()  - JOG_SIZE, nx));
         ny = Math.max(JOG_SIZE, Math.min(canvasArena.getHeight() - JOG_SIZE, ny));
-        jogX = nx; jogY = ny;
+        jogX = nx;
+        jogY = ny;
 
-        // Recuperação passiva de vigor
         jogador().recuperarVigor(1);
     }
+
     private void moverInimigos() {
         for (Inimigo ini : inimigos) {
             if (!ini.estaVivo()) continue;
-            double dx = jogX - ini.getX();
-            double dy = jogY - ini.getY();
+            double dx   = jogX - ini.getX();
+            double dy   = jogY - ini.getY();
             double dist = Math.sqrt(dx * dx + dy * dy);
             if (dist > 0) {
                 ini.setX(ini.getX() + (dx / dist) * ini.getVelocidade());
@@ -322,7 +354,6 @@ public class GameplayController implements Initializable {
     
     private void verificarAtaque(long agora) {
         if (!atacando) return;
-        // Alcance do ataque
         double alcance = JOG_SIZE + 30;
         for (Inimigo ini : inimigos) {
             if (!ini.estaVivo()) continue;
@@ -341,20 +372,13 @@ public class GameplayController implements Initializable {
     private static final long INTERVALO_DANO = 800_000_000L;
 
     private void verificarColisoes() {
-        if (esquivando) {
-            return;
-        }
+        if (esquivando) return;
             
         long agora = System.nanoTime();
-        if (agora - ultimoDanoRecebido < INTERVALO_DANO) {
-            return;
-        }
+        if (agora - ultimoDanoRecebido < INTERVALO_DANO) return;
             
         for (Inimigo ini : inimigos) {
-            if (!ini.estaVivo()) {
-                continue;
-            }
-                
+            if (!ini.estaVivo()) continue;
             if (distancia(jogX, jogY, ini.getX(), ini.getY()) < JOG_SIZE + INIM_SIZE) {
                 jogador().receberDano(ini.getDano());
                 ultimoDanoRecebido = agora;
@@ -363,24 +387,26 @@ public class GameplayController implements Initializable {
         }
     }
     
-   private void configurarRedimensionamento() {
+    private void configurarRedimensionamento() {
         if (canvasArena == null || spritePane == null) return;
 
-        canvasArena.parentProperty().addListener((obs, antigo, novo) -> {
-            if (novo instanceof StackPane) {
-                StackPane sp = (StackPane) novo; // cast explícito para Java 11
-                canvasArena.widthProperty().bind(sp.widthProperty());
-                canvasArena.heightProperty().bind(sp.heightProperty());
-                spritePane.prefWidthProperty().bind(sp.widthProperty());
-                spritePane.prefHeightProperty().bind(sp.heightProperty());
+        // Verifica se o pai já é um StackPane
+        if (canvasArena.getParent() instanceof StackPane) {
+            bindAoStackPane((StackPane) canvasArena.getParent());
+        } else {
+            canvasArena.parentProperty().addListener((obs, antigo, novo) -> {
+                if (novo instanceof StackPane) {
+                    bindAoStackPane((StackPane) novo);
+                }
+            });
+        }
+    }
 
-                sp.widthProperty().addListener((o, ov, nv) -> {
-                    if (nv.doubleValue() > 0 && jogX == 0 && jogY == 0) {
-                        posicionarJogador();
-                    }
-                });
-            }
-        });
+    private void bindAoStackPane(StackPane sp) {
+        canvasArena.widthProperty().bind(sp.widthProperty());
+        canvasArena.heightProperty().bind(sp.heightProperty());
+        spritePane.prefWidthProperty().bind(sp.widthProperty());
+        spritePane.prefHeightProperty().bind(sp.heightProperty());
     }
     
     private void renderizar(long agora) {
@@ -422,86 +448,81 @@ public class GameplayController implements Initializable {
         }
     }
     
-
     private void atualizarSprites() {
-    boolean movendo = teclasPressionadas.contains(KeyCode.W)
-                   || teclasPressionadas.contains(KeyCode.S)
-                   || teclasPressionadas.contains(KeyCode.A)
-                   || teclasPressionadas.contains(KeyCode.D);
+        boolean movendo = teclasPressionadas.contains(KeyCode.W)
+                       || teclasPressionadas.contains(KeyCode.S)
+                       || teclasPressionadas.contains(KeyCode.A)
+                       || teclasPressionadas.contains(KeyCode.D);
 
-    
-    if (teclasPressionadas.contains(KeyCode.W)) direcao = "tras";
-    if (teclasPressionadas.contains(KeyCode.S)) direcao = "frente";
-    if (teclasPressionadas.contains(KeyCode.D)) direcao = "direita";
-    if (teclasPressionadas.contains(KeyCode.A)) direcao = "esquerda";
+        if (teclasPressionadas.contains(KeyCode.W)) direcao = "tras";
+        if (teclasPressionadas.contains(KeyCode.S)) direcao = "frente";
+        if (teclasPressionadas.contains(KeyCode.D)) direcao = "direita";
+        if (teclasPressionadas.contains(KeyCode.A)) direcao = "esquerda";
 
-    long agora = System.nanoTime();
+        long agora = System.nanoTime();
 
-    if (atacando) {
-        // Ataque para esquerda ou direita
-        if ("esquerda".equals(direcao) && animAtaqueEsquerda != null) {
-            if (animAtaqueEsquerda.isFinalizado()) animAtaqueEsquerda.reiniciar();
-            animAtaqueEsquerda.atualizar(agora, jogadorSprite);
-        } else if (animAtaque != null) {
-            if (animAtaque.isFinalizado()) animAtaque.reiniciar();
-            animAtaque.atualizar(agora, jogadorSprite);
-        }
+        if (atacando) {
+            if ("esquerda".equals(direcao) && animAtaqueEsquerda != null) {
+                if (animAtaqueEsquerda.isFinalizado()) animAtaqueEsquerda.reiniciar();
+                animAtaqueEsquerda.atualizar(agora, jogadorSprite);
+            } else if (animAtaque != null) {
+                if (animAtaque.isFinalizado()) animAtaque.reiniciar();
+                animAtaque.atualizar(agora, jogadorSprite);
+            }
 
-    } else if (movendo) {
-        // Andar para esquerda ou direita
-        if ("esquerda".equals(direcao) && animAndandoEsquerda != null) {
-            animAndando.reiniciar(); // reseta o outro lado
-            animAndandoEsquerda.atualizar(agora, jogadorSprite);
-        } else if ("direita".equals(direcao) && animAndando != null) {
-            animAndandoEsquerda.reiniciar();
-            animAndando.atualizar(agora, jogadorSprite);
+        } else if (movendo) {
+            if ("esquerda".equals(direcao) && animAndandoEsquerda != null) {
+                if (animAndando != null) animAndando.reiniciar();
+                animAndandoEsquerda.atualizar(agora, jogadorSprite);
+            } else if ("direita".equals(direcao) && animAndando != null) {
+                if (animAndandoEsquerda != null) animAndandoEsquerda.reiniciar();
+                animAndando.atualizar(agora, jogadorSprite);
+            } else {
+                // Frente ou trás — sprite estático
+                Image imgEstatica = "tras".equals(direcao) ? imgJogadorTras : imgJogadorFrente;
+                if (imgEstatica != null) jogadorSprite.setImage(imgEstatica);
+            }
+
         } else {
             Image imgEstatica;
-            if ("tras".equals(direcao))    imgEstatica = imgJogadorTras;
-            else                            imgEstatica = imgJogadorFrente;
+            if ("tras".equals(direcao))          imgEstatica = imgJogadorTras;
+            else if ("frente".equals(direcao))   imgEstatica = imgJogadorFrente;
+            else if ("esquerda".equals(direcao)) imgEstatica = imgJogadorEsquerda;
+            else                                 imgEstatica = imgJogador;
+
             if (imgEstatica != null) jogadorSprite.setImage(imgEstatica);
+
+            if (animAndando != null)         animAndando.reiniciar();
+            if (animAndandoEsquerda != null) animAndandoEsquerda.reiniciar();
         }
 
-    } else {
-        // Parado — sprite estático da direção atual
-        Image imgEstatica;
-        if ("tras".equals(direcao))         imgEstatica = imgJogadorTras;
-        else if ("Frente".equals(direcao)) imgEstatica = imgJogadorFrente;
-        else if ("esquerda".equals(direcao)) imgEstatica = imgJogadorEsquerda;
-        else                                 imgEstatica = imgJogador;
+        jogadorSprite.setOpacity(esquivando ? 0.5 : 1.0);
+        posicionarSprite(jogadorSprite, jogX, jogY, JOG_SPRITE_W, JOG_SPRITE_H);
 
-        if (imgEstatica != null) jogadorSprite.setImage(imgEstatica);
-
-        // Reseta animações de andar
-        if (animAndando != null)         animAndando.reiniciar();
-        if (animAndandoEsquerda != null) animAndandoEsquerda.reiniciar();
-    }
-
-    jogadorSprite.setOpacity(esquivando ? 0.5 : 1.0);
-    posicionarSprite(jogadorSprite, jogX, jogY, JOG_SPRITE_W, JOG_SPRITE_H);
-
-    // Inimigos (sem alteração)
-    for (Inimigo ini : inimigos) {
-        ImageView iv = inimigoSprites.get(ini);
-        if (iv == null) continue;
-        if (!ini.estaVivo()) iv.setVisible(false);
-        else {
-            iv.setVisible(true);
-            posicionarSprite(iv, ini.getX(), ini.getY(), INIM_SPRITE_W, INIM_SPRITE_H);
+        for (Inimigo ini : inimigos) {
+            ImageView iv = inimigoSprites.get(ini);
+            if (iv == null) continue;
+            if (!ini.estaVivo()) iv.setVisible(false);
+            else {
+                iv.setVisible(true);
+                posicionarSprite(iv, ini.getX(), ini.getY(), INIM_SPRITE_W, INIM_SPRITE_H);
+            }
         }
     }
-}
+
     private void verificarCondicoes() {
         Jogador j = jogador();
         if (!j.estaVivo()) {
-            emJogo = false; gameLoop.stop();
+            emJogo = false;
+            gameLoop.stop();
             mostrarMensagem("VOCÊ MORREU", "Vesper reclama mais uma alma...", "Tentar Novamente", false);
             salvarPartida(false);
             return;
         }
         boolean todosVencidos = inimigos.stream().noneMatch(Inimigo::estaVivo);
         if (todosVencidos) {
-            emJogo = false; gameLoop.stop();
+            emJogo = false;
+            gameLoop.stop();
             int fase = Sessao.getInstance().getFaseAtual();
             if (fase >= 6)
                 mostrarMensagem("FASE CONCLUÍDA!", "A catedral aguarda. Prepare-se para o Sacerdote.", "Enfrentar o Boss", true);
@@ -511,6 +532,7 @@ public class GameplayController implements Initializable {
                     "Próxima Fase", true);
         }
     }
+
     private boolean proximaEhBoss = false;
     
     private void mostrarMensagem(String titulo, String sub, String btnTexto, boolean ehVitoria) {
@@ -523,16 +545,17 @@ public class GameplayController implements Initializable {
 
     @FXML private void onAcaoMensagem() throws IOException {
         painelMensagem.setVisible(false);
-        if (!jogador().estaVivo())        App.setRoot("Upgrade");
-        else if (proximaEhBoss)           App.setRoot("Boss");
+        if (!jogador().estaVivo())  App.setRoot("Upgrade");
+        else if (proximaEhBoss)     App.setRoot("Boss");
         else { 
             Sessao.getInstance().avancarFase(); 
-            App.setRoot("Loja ");
+            App.setRoot("Loja");
         }
     }
     
     @FXML private void onIrMenu() throws IOException {
-        gameLoop.stop(); salvarPartida(false);
+        if (gameLoop != null) gameLoop.stop();
+        salvarPartida(false);
         App.setRoot("Menu");
     }
     
@@ -576,5 +599,4 @@ public class GameplayController implements Initializable {
     private double distancia(double x1, double y1, double x2, double y2) {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
-
 }
