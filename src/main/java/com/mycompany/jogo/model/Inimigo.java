@@ -3,7 +3,7 @@ package com.mycompany.jogo.model;
 public class Inimigo {
  
     public enum Tipo {
-        PESCADOR_FERA,
+        CERVO,
         LOBISOMEM,
         BOSS_CATEDRAL
     }
@@ -34,22 +34,22 @@ public class Inimigo {
         double escala = 1.0 + (fase - 1) * 0.2;
  
         switch (tipo) {
-            case PESCADOR_FERA:
-                this.nome = "Pescador das Trevas";
+            case LOBISOMEM:
+                this.nome = "Lobisomen De Vesper";
                 this.vidaMaxima = (int)(60  * escala);
                 this.dano = (int)(8   * escala);
                 this.velocidade = (int)(2   * escala);
                 this.recompensaSangue = (int)(30  * escala);
                 this.recompensaXp = (int)(20  * escala);
-            
-            case LOBISOMEM:
-                this.nome = "Lobisomem de Vesper";
+            break;
+            case CERVO:
+                this.nome = "Cervo";
                 this.vidaMaxima = (int)(100 * escala);
                 this.dano = (int)(15  * escala);
                 this.velocidade = (int)(3   * escala);
                 this.recompensaSangue = (int)(60  * escala);
                 this.recompensaXp = (int)(40  * escala);
-            
+            break;
             case BOSS_CATEDRAL:
                 this.nome = "O Sacerdote do Sino";
                 this.vidaMaxima = (int)(500 * escala);
@@ -57,7 +57,7 @@ public class Inimigo {
                 this.velocidade = 2;
                 this.recompensaSangue = (int)(500 * escala);
                 this.recompensaXp = (int)(300 * escala);
-            
+            break; 
         }
         this.vidaAtual = this.vidaMaxima;
     }

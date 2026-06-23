@@ -105,6 +105,11 @@ public class Jogador {
         tecnica += bonus;
         calcularAtributosDerivados();
     }
+    
+    public void restaurarVida() {
+        this.vidaAtual = this.vidaMaxima;
+        this.vigorAtual = this.vigorMaximo;
+    }
 
     public int getId() {
         return id;

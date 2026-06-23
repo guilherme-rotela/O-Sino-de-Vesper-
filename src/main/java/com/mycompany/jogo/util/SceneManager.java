@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
+import javafx.stage.Modality;
 
 public class SceneManager {
 
@@ -71,25 +72,20 @@ public class SceneManager {
         }
     }
 
-    public static void openNewWindow(String fxmlPath, String titulo) {
-        try {
-            URL fxmlUrl = resolverFxml(fxmlPath);
-            if (fxmlUrl == null) return;
-
-            FXMLLoader loader = new FXMLLoader(fxmlUrl);
-            Parent root = loader.load();
-
-            Stage stage = new Stage();
-            Scene scene = new Scene(root);
-
-            URL cssUrl = resolverCss();
-            if (cssUrl != null) scene.getStylesheets().add(cssUrl.toExternalForm());
-
-            stage.setScene(scene);
-            stage.setTitle(titulo);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static Stage openNewWindow(String fxml, String titulo) {
+    try {
+        FXMLLoader loader = new FXMLLoader(
+            SceneManager.class.getResource("/com/mycompany/jogo/" + fxml)
+        );
+        Stage stage = new Stage();
+        stage.setTitle(titulo);
+        stage.setScene(new Scene(loader.load()));
+        stage.initModality(Modality.APPLICATION_MODAL); // bloqueia a janela pai
+        stage.show();
+        return stage;
+    } catch (IOException e) {
+        e.printStackTrace();
+        return null;
     }
+}
 }
