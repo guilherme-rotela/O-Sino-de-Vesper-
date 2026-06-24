@@ -5,7 +5,6 @@ import com.mycompany.jogo.App;
 import com.mycompany.jogo.DAO.JogadorDAO;
 import com.mycompany.jogo.model.Inimigo;
 import com.mycompany.jogo.model.Jogador;
-import com.mycompany.jogo.util.SceneManager;
 import com.mycompany.jogo.util.Sessao;
 import com.mycompany.jogo.util.SpriteAnimacao;
 import java.io.IOException;
@@ -20,17 +19,21 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class GameplayController implements Initializable {
 
-    // ── FXML ──────────────────────────────────────────────────────────────────
+    //FXML 
     @FXML private Canvas      canvasArena;
     @FXML private ProgressBar barraVida, barraVigor;
     @FXML private Label       labelVida, labelVigor, labelSangue, labelXp;
@@ -40,7 +43,7 @@ public class GameplayController implements Initializable {
     @FXML private Button      btnAcaoMensagem;
     @FXML private Pane        spritePane;
 
-    // ── Sprite do jogador ─────────────────────────────────────────────────────
+    // Sprite do jogador 
     private ImageView jogadorSprite;
 
     private Image sheetAndando;
@@ -60,11 +63,10 @@ public class GameplayController implements Initializable {
 
     private String direcaoJogador = "frente";
 
-    private static final double JOG_SPRITE_W = 64;
-    private static final double JOG_SPRITE_H = 64;
+    private static final double JOG_SPRITE_W = 96;
+    private static final double JOG_SPRITE_H = 96;
 
-    // ── Sprites dos inimigos ──────────────────────────────────────────────────
-    /** Dados de animação associados a cada inimigo vivo */
+    //Sprites dos inimigos 
     private static class DadosAnimacaoInimigo {
         // Cervo
         SpriteAnimacao cervoAndarDir;
@@ -91,7 +93,7 @@ public class GameplayController implements Initializable {
     private final Map<Inimigo, ImageView>             inimigoSprites   = new LinkedHashMap<>();
     private final Map<Inimigo, DadosAnimacaoInimigo>  inimigoAnimacoes = new LinkedHashMap<>();
 
-    // Spritesheets dos inimigos (carregadas uma vez)
+    // Spritesheets dos inimigos
     private Image sheetCervoAndarDir;
     private Image sheetCervoAndarEsq;
     private Image sheetCervoAndarFrente;
@@ -106,14 +108,12 @@ public class GameplayController implements Initializable {
     private Image sheetLobAtaqueDir;
     private Image sheetLobAtaqueEsq;
 
-    // Tamanho do sprite de inimigo na tela (escalonado para boa visibilidade)
-    // Cervo: frames 92x92 → exibido em 92x92
-    // Lob:   frames 68x68 → exibido em 68x68
-    // Usamos o maior valor; o ImageView preserva a razão de aspecto por tipo
-    private static final double INIM_SPRITE_W = 92;
-    private static final double INIM_SPRITE_H = 92;
+    private static final double CERVO_SPRITE_W = 140;
+    private static final double CERVO_SPRITE_H = 140;
+    private static final double LOB_SPRITE_W   = 110;
+    private static final double LOB_SPRITE_H   = 110;
 
-    // ── Estado do jogador ─────────────────────────────────────────────────────
+    //Estado do jogador
     private double jogX, jogY;
     private static final double JOG_SIZE  = 20;
     private static final double JOG_SPEED = 3.0;
@@ -125,23 +125,27 @@ public class GameplayController implements Initializable {
     private boolean atacando     = false;
     private long    ataqueInicio = 0;
     private static final long ATAQUE_DURACAO = 300_000_000L;
+    
+    //Recuperação de vigor
+    private long ultimaRecuperacaoVigor = 0;
+    private static final long INTERVALO_RECUPERACAO_VIGOR = 500_000_000L;
 
-    // ── Teclas ────────────────────────────────────────────────────────────────
+    //Teclas
     private final Set<KeyCode> teclasPressionadas = new HashSet<>();
 
-    // ── Inimigos ──────────────────────────────────────────────────────────────
+    //Inimigos 
     private final List<Inimigo> inimigos = new ArrayList<>();
     private static final double INIM_SIZE         = 18;
     private static final int    INIMIGOS_POR_FASE = 5;
 
-    // Raio a partir do qual o inimigo "entra em modo ataque"
+
     private static final double RAIO_ATAQUE_INIMIGO = INIM_SIZE + JOG_SIZE + 10;
 
-    // ── Game loop ─────────────────────────────────────────────────────────────
+    //Game loop 
     private AnimationTimer gameLoop;
     private boolean emJogo = false;
 
-    // ── Fases ─────────────────────────────────────────────────────────────────
+    //Fases
     private static final String[] NOMES_FASES = {
         "Fase 1 — Vila de Vesper",
         "Fase 2 — Beco das Sombras",
@@ -154,7 +158,7 @@ public class GameplayController implements Initializable {
     private final JogadorDAO jogadorDAO = new JogadorDAO();
     private boolean inicializado = false;
 
-    // ── initialize ────────────────────────────────────────────────────────────
+    //initialize 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         carregarImagens();
@@ -169,7 +173,7 @@ public class GameplayController implements Initializable {
         });
     }
 
-    // ── Inicialização ─────────────────────────────────────────────────────────
+    //Inicialização 
     private void tentarIniciar() {
         double W = canvasArena.getWidth();
         double H = canvasArena.getHeight();
@@ -191,7 +195,7 @@ public class GameplayController implements Initializable {
         }
     }
 
-    // ── Carregamento de imagens ───────────────────────────────────────────────
+    //Carregamento de imagens 
     private void carregarImagens() {
         // Jogador
         imgJogador         = carregarImagem("jogador.png");
@@ -217,14 +221,7 @@ public class GameplayController implements Initializable {
             animAtaqueEsquerda.setLoop(false);
         }
 
-        // ── Cervo ──────────────────────────────────────────────────────────
-        // Dimensões medidas dos arquivos:
-        //   cervoAndarDireita.png   → 552x92 → 6 frames de 92x92
-        //   cervoAndarEsquerda.png  → 552x92 → 6 frames de 92x92
-        //   cervoAndarFrente.png    → 552x92 → 6 frames de 92x92
-        //   cervoAndarTras.png      → 552x92 → 6 frames de 92x92
-        //   cervoAtaqueDireita.png  → 1380x92 → 15 frames de 92x92
-        //   cervoAtaqueEsquerda.png → 1380x92 → 15 frames de 92x92
+
         sheetCervoAndarDir    = carregarImagem("cervoAndarDireita.png");
         sheetCervoAndarEsq    = carregarImagem("cervoAndarEsquerda.png");
         sheetCervoAndarFrente = carregarImagem("cervoAndarFrente.png");
@@ -232,14 +229,6 @@ public class GameplayController implements Initializable {
         sheetCervoAtaqueDir   = carregarImagem("cervoAtaqueDireita.png");
         sheetCervoAtaqueEsq   = carregarImagem("cervoAtaqueEsquerda.png");
 
-        // ── Lobisomem (lob) ────────────────────────────────────────────────
-        // Dimensões medidas dos arquivos:
-        //   lobisomenAndandoDireita.png  → 272x68 → 4 frames de 68x68
-        //   lobisomenAndandoEsquerda.png → 272x68 → 4 frames de 68x68
-        //   lobAndarFrente.png           → 272x68 → 4 frames de 68x68
-        //   lobAndarTras.png             → 272x68 → 4 frames de 68x68
-        //   lobAtaqueDireita.png         → 340x68 → 5 frames de 68x68
-        //   lobAtaqueEsquerda.png        → 340x68 → 5 frames de 68x68
         sheetLobAndarDir    = carregarImagem("lobisomenAndandoDireita.png");
         sheetLobAndarEsq    = carregarImagem("lobisomenAndandoEsquerda.png");
         sheetLobAndarFrente = carregarImagem("lobAndarFrente.png");
@@ -258,7 +247,7 @@ public class GameplayController implements Initializable {
         return null;
     }
 
-    // ── Sprites ───────────────────────────────────────────────────────────────
+    //Sprites
     private ImageView criarSprite(Image img, double w, double h) {
         ImageView iv = new ImageView();
         if (img != null) iv.setImage(img);
@@ -274,7 +263,7 @@ public class GameplayController implements Initializable {
         iv.setLayoutY(cy - h / 2.0);
     }
 
-    // ── Posição jogador ───────────────────────────────────────────────────────
+    //Posição jogador
     private void posicionarJogador() {
         double W = canvasArena.getWidth();
         double H = canvasArena.getHeight();
@@ -283,7 +272,7 @@ public class GameplayController implements Initializable {
         jogY = H / 2;
     }
 
-    // ── Teclado ───────────────────────────────────────────────────────────────
+    //Teclado 
     private void configurarTeclado() {
         if (canvasArena == null) return;
         if (canvasArena.getScene() != null) {
@@ -303,7 +292,7 @@ public class GameplayController implements Initializable {
         canvasArena.requestFocus();
     }
 
-    // ── Geração de inimigos ───────────────────────────────────────────────────
+    //Geração de inimigos
     private void gerarInimigos() {
         for (ImageView iv : inimigoSprites.values()) spritePane.getChildren().remove(iv);
         inimigoSprites.clear();
@@ -317,7 +306,7 @@ public class GameplayController implements Initializable {
 
         for (int i = 0; i < INIMIGOS_POR_FASE; i++) {
             Inimigo.Tipo tipo = (fase >= 3 && rng.nextBoolean())
-                    ? Inimigo.Tipo.LOBISOMEM : Inimigo.Tipo.CERVO;
+                ? Inimigo.Tipo.CERVO : Inimigo.Tipo.LOBISOMEM;
             Inimigo ini = new Inimigo(tipo, fase);
 
             double x, y;
@@ -331,30 +320,28 @@ public class GameplayController implements Initializable {
             inimigos.add(ini);
 
             // Sprite inicial (primeiro frame de "andar frente")
-            // Cervo usa frames 92x92, Lob usa frames 68x68
-            double sw = (tipo == Inimigo.Tipo.LOBISOMEM) ? 68 : 92;
-            double sh = sw;
+            double sw = (tipo == Inimigo.Tipo.LOBISOMEM) ? LOB_SPRITE_W : CERVO_SPRITE_W;
+            double sh = (tipo == Inimigo.Tipo.LOBISOMEM) ? LOB_SPRITE_H : CERVO_SPRITE_H;
             Image imgInicial = obterImagemInicialInimigo(tipo);
             ImageView iv = criarSprite(imgInicial, sw, sh);
             posicionarSprite(iv, x, y, sw, sh);
             spritePane.getChildren().add(iv);
             inimigoSprites.put(ini, iv);
 
-            // Cria dados de animação para este inimigo
             DadosAnimacaoInimigo dad = criarDadosAnimacao(tipo);
             inimigoAnimacoes.put(ini, dad);
         }
         emJogo = true;
     }
 
-    /** Retorna uma imagem estática para exibir antes de qualquer animação */
+
     private Image obterImagemInicialInimigo(Inimigo.Tipo tipo) {
         return tipo == Inimigo.Tipo.LOBISOMEM
                 ? sheetLobAndarFrente
                 : sheetCervoAndarFrente;
     }
 
-    /** Cria um conjunto de SpriteAnimacao para um inimigo recém-gerado */
+
     private DadosAnimacaoInimigo criarDadosAnimacao(Inimigo.Tipo tipo) {
         DadosAnimacaoInimigo dad = new DadosAnimacaoInimigo();
 
@@ -372,10 +359,7 @@ public class GameplayController implements Initializable {
                 dad.cervoAtaqueEsq = new SpriteAnimacao(sheetCervoAtaqueEsq, 15, 12);
                 dad.cervoAtaqueEsq.setLoop(false);
             }
-        } else { // LOBISOMEM
-            // Lob: frames 68x68
-            // Andar: 272px / 68px = 4 frames @ 8 fps
-            // Ataque: 340px / 68px = 5 frames @ 10 fps
+        } else {
             if (sheetLobAndarDir    != null) dad.lobAndarDir    = new SpriteAnimacao(sheetLobAndarDir,    4,  8);
             if (sheetLobAndarEsq    != null) dad.lobAndarEsq    = new SpriteAnimacao(sheetLobAndarEsq,    4,  8);
             if (sheetLobAndarFrente != null) dad.lobAndarFrente = new SpriteAnimacao(sheetLobAndarFrente, 4,  8);
@@ -392,7 +376,7 @@ public class GameplayController implements Initializable {
         return dad;
     }
 
-    // ── Game loop ─────────────────────────────────────────────────────────────
+    //Game loop
     private void iniciarGameLoop() {
         if (gameLoop != null) gameLoop.stop();
         gameLoop = new AnimationTimer() {
@@ -431,10 +415,12 @@ public class GameplayController implements Initializable {
         }
         if (atacando && agora - ataqueInicio > ATAQUE_DURACAO) atacando = false;
 
-        // Inventário (I)
+       // Inventário (I)
         if (teclasPressionadas.contains(KeyCode.I)) {
             teclasPressionadas.remove(KeyCode.I);
-            onAbrirInventario();
+            if (gameLoop != null) gameLoop.stop();
+            emJogo = false;
+            Platform.runLater(this::onAbrirInventario);
         }
 
         // Movimento WASD
@@ -450,7 +436,10 @@ public class GameplayController implements Initializable {
         jogX = nx;
         jogY = ny;
 
-        jogador().recuperarVigor(1);
+        if (agora - ultimaRecuperacaoVigor >= INTERVALO_RECUPERACAO_VIGOR) {
+            jogador().recuperarVigor(1);
+            ultimaRecuperacaoVigor = agora;
+        }
     }
 
     private void moverInimigos() {
@@ -460,7 +449,7 @@ public class GameplayController implements Initializable {
             double dy   = jogY - ini.getY();
             double dist = Math.sqrt(dx * dx + dy * dy);
             if (dist > RAIO_ATAQUE_INIMIGO) {
-                // Ainda longe — anda em direção ao jogador
+               
                 ini.setX(ini.getX() + (dx / dist) * ini.getVelocidade());
                 ini.setY(ini.getY() + (dy / dist) * ini.getVelocidade());
                 atualizarDirecaoInimigo(ini, dx, dy);
@@ -468,18 +457,16 @@ public class GameplayController implements Initializable {
                 DadosAnimacaoInimigo dad = inimigoAnimacoes.get(ini);
                 if (dad != null) dad.atacando = false;
             } else {
-                // Perto — fica parado e ataca
+                
                 DadosAnimacaoInimigo dad = inimigoAnimacoes.get(ini);
                 if (dad != null) {
                     dad.atacando = true;
-                    // Redefine a direção de ataque de acordo com posição relativa
                     atualizarDirecaoInimigo(ini, dx, dy);
                 }
             }
         }
     }
 
-    /** Calcula e salva a direção do inimigo com base no vetor (dx, dy) para o jogador */
     private void atualizarDirecaoInimigo(Inimigo ini, double dx, double dy) {
         DadosAnimacaoInimigo dad = inimigoAnimacoes.get(ini);
         if (dad == null) return;
@@ -491,13 +478,25 @@ public class GameplayController implements Initializable {
         }
     }
 
+    private final Set<Inimigo> inimigosAtingidosNoAtaque = new HashSet<>();
+    private boolean ataqueAnterior = false;
+
     private void verificarAtaque(long agora) {
+        // Detecta início de um novo ataque para limpar o set
+        if (atacando && !ataqueAnterior) {
+            inimigosAtingidosNoAtaque.clear();
+        }
+        ataqueAnterior = atacando;
+
         if (!atacando) return;
+
         double alcance = JOG_SIZE + 30;
         for (Inimigo ini : inimigos) {
             if (!ini.estaVivo()) continue;
+            if (inimigosAtingidosNoAtaque.contains(ini)) continue; // já levou dano neste ataque
             if (distancia(jogX, jogY, ini.getX(), ini.getY()) <= alcance) {
                 ini.receberDano(jogador().getDano());
+                inimigosAtingidosNoAtaque.add(ini);
                 if (!ini.estaVivo()) {
                     Sessao.getInstance().registrarInimigomorto(
                         ini.getRecompensaSangue(), ini.getRecompensaXp()
@@ -524,7 +523,7 @@ public class GameplayController implements Initializable {
         }
     }
 
-    // ── Redimensionamento ─────────────────────────────────────────────────────
+    //Redimensionamento
     private void configurarRedimensionamento() {
         if (canvasArena == null || spritePane == null) return;
         if (canvasArena.getParent() instanceof StackPane) {
@@ -543,7 +542,6 @@ public class GameplayController implements Initializable {
         spritePane.prefHeightProperty().bind(sp.heightProperty());
     }
 
-    // ── Renderização (canvas) ─────────────────────────────────────────────────
     private void renderizar(long agora) {
         GraphicsContext gc = canvasArena.getGraphicsContext2D();
         double W = canvasArena.getWidth(), H = canvasArena.getHeight();
@@ -574,7 +572,7 @@ public class GameplayController implements Initializable {
         
     }
 
-    // ── Atualização de sprites ────────────────────────────────────────────────
+    //Atualização de sprites
     private void atualizarSprites(long agora) {
         atualizarSpriteJogador(agora);
         atualizarSpritesInimigos(agora);
@@ -635,8 +633,9 @@ public class GameplayController implements Initializable {
                 continue;
             }
             iv.setVisible(true);
-            double sw = (ini.getTipo() == Inimigo.Tipo.LOBISOMEM) ? 68 : 92;
-            posicionarSprite(iv, ini.getX(), ini.getY(), sw, sw);
+            double sw = (ini.getTipo() == Inimigo.Tipo.LOBISOMEM) ? LOB_SPRITE_W : CERVO_SPRITE_W;
+            double sh = (ini.getTipo() == Inimigo.Tipo.LOBISOMEM) ? LOB_SPRITE_H : CERVO_SPRITE_H;
+            posicionarSprite(iv, ini.getX(), ini.getY(), sw, sh);
 
             DadosAnimacaoInimigo dad = inimigoAnimacoes.get(ini);
             if (dad == null) continue;
@@ -768,7 +767,7 @@ public class GameplayController implements Initializable {
         if (dad.lobAndarTras   != null) dad.lobAndarTras.reiniciar();
     }
 
-    // ── Condições de vitória/derrota ──────────────────────────────────────────
+    //Condições de vitória/derrota
     private void verificarCondicoes() {
         Jogador j = jogador();
         if (!j.estaVivo()) {
@@ -808,9 +807,8 @@ public class GameplayController implements Initializable {
         emJogo = false;
 
         if (!jogador().estaVivo()) {
-            // Restaura a vida do jogador para poder jogar novamente
             jogador().restaurarVida();
-            App.setRoot("Gameplay");   // reinicia a fase atual
+            App.setRoot("Gameplay");   
         } else if (proximaEhBoss) {
             App.setRoot("Boss");
         } else {
@@ -827,24 +825,35 @@ public class GameplayController implements Initializable {
     }
 
     @FXML private void onAbrirInventario() {
-    if (gameLoop != null) gameLoop.stop();
-    emJogo = false;
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/com/mycompany/jogo/Inventario.fxml")
+            );
+            Parent root = loader.load();
 
-    Stage stage = SceneManager.openNewWindow("Inventario.fxml", "Inventário — " + jogador().getNome());
+            Scene scene = new Scene(root);
+            URL cssUrl = getClass().getResource("/com/mycompany/jogo/style.css");
+            if (cssUrl != null) scene.getStylesheets().add(cssUrl.toExternalForm());
 
-    if (stage != null) {
-        
-        stage.setOnHidden(e -> {
-            if (jogador().estaVivo()) {
-                emJogo = true;
-                if (gameLoop != null) gameLoop.start();
-                canvasArena.requestFocus();
-            }
-        });
+            Stage invStage = new Stage();
+            invStage.setTitle("Inventário — " + jogador().getNome());
+            invStage.setScene(scene);
+            invStage.setResizable(false);
+            invStage.initModality(Modality.APPLICATION_MODAL);
+            invStage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (jogador().estaVivo()) {
+            emJogo = true;
+            if (gameLoop != null) gameLoop.start();
+            canvasArena.requestFocus();
+        }
     }
-}
 
-    // ── HUD ───────────────────────────────────────────────────────────────────
+    //HUD 
     private void atualizarHUD() {
         Jogador j = jogador();
         barraVida.setProgress((double) j.getVidaAtual() / j.getVidaMaxima());
@@ -862,7 +871,6 @@ public class GameplayController implements Initializable {
         labelFase.setText(f <= NOMES_FASES.length ? NOMES_FASES[f - 1] : "Fase " + f);
     }
 
-    // ── Persistência ──────────────────────────────────────────────────────────
     private void salvarPartida(boolean vitoria) {
         try {
             Sessao gs = Sessao.getInstance();
@@ -874,7 +882,7 @@ public class GameplayController implements Initializable {
         }
     }
 
-    // ── Utilitários ───────────────────────────────────────────────────────────
+   
     private Jogador jogador() {
         return Sessao.getInstance().getJogadorAtual();
     }

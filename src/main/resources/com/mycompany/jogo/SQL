@@ -46,7 +46,8 @@ CREATE TABLE inventario (
     id SERIAL PRIMARY KEY,
     jogador_id INT REFERENCES jogadores(id) ON DELETE CASCADE,
     item_id INT REFERENCES itens_loja(id),
-    quantidade INT DEFAULT 1
+    quantidade INT DEFAULT 1,
+    equipado INTEGER NOT NULL DEFAULT 0
 );
  
 CREATE TABLE partidas (
@@ -76,9 +77,9 @@ GROUP BY j.nome, ja.nivel, ja.total_xp, ja.pontos_sangue
 ORDER BY ja.total_xp DESC;
  
 INSERT INTO upgrades (nome, descricao, tipo, custo_sangue, bonus_valor) VALUES
-('Vitalidade I',    'Aumenta vida máxima em 20',       'vitalidade', 100, 20),
-('Vitalidade II',   'Aumenta vida máxima em 40',       'vitalidade', 250, 40),
-('Vitalidade III',  'Aumenta vida máxima em 60',       'vitalidade', 500, 60),
+('Vitalidade I',    'Aumenta vida máxima em 100',       'vitalidade', 100, 20),
+('Vitalidade II',   'Aumenta vida máxima em 200',       'vitalidade', 250, 40),
+('Vitalidade III',  'Aumenta vida máxima em 300',       'vitalidade', 500, 60),
 ('Vigor I',         'Aumenta vigor máximo em 20',      'vigor',      100, 20),
 ('Vigor II',        'Aumenta vigor máximo em 40',      'vigor',      250, 40),
 ('Vigor III',       'Aumenta vigor máximo em 60',      'vigor',      500, 60),
@@ -94,3 +95,4 @@ INSERT INTO itens_loja (nome, descricao, tipo, custo_sangue, bonus_atributo, bon
 ('Cota de Malha',      'Proteção de ferro envelhecido',    'armadura',200, 'vitalidade',25),
 ('Poção de Sangue',    'Restaura 50 pontos de vida',       'pocao',   40,  'vitalidade',50),
 ('Poção de Vigor',     'Restaura vigor completamente',     'pocao',   60,  'vigor',     100);
+

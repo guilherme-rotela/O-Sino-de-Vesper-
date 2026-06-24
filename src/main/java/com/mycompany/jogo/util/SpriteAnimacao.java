@@ -10,7 +10,7 @@ public class SpriteAnimacao {
     private final WritableImage[] frames;
     private int frameAtual = 0;
     private long ultimoTempo = 0;
-    private final long intervalNanos; // tempo entre frames em nanosegundos
+    private final long intervalNanos;
     private boolean loop = true;
     private boolean finalizado = false;
 
@@ -27,27 +27,21 @@ public class SpriteAnimacao {
         }
     }
 
-    /** Define se a animação repete (true) ou para no último frame (false) */
     public void setLoop(boolean loop) {
         this.loop = loop;
     }
 
-    /** Reinicia a animação do início */
+
     public void reiniciar() {
         frameAtual = 0;
         ultimoTempo = 0;
         finalizado = false;
     }
 
-    /** Retorna true se uma animação sem loop chegou ao fim */
     public boolean isFinalizado() {
         return finalizado;
     }
 
-    /**
-     * Atualiza o frame e aplica no ImageView.
-     * Chame isso a cada tick do game loop, passando System.nanoTime().
-     */
     public void atualizar(long agora, ImageView iv) {
         if (finalizado) return;
 

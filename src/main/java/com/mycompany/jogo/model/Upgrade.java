@@ -5,7 +5,7 @@ public class Upgrade {
     private int id;
     private String nome;
     private String descricao;
-    private String tipo; // vitalidade, vigor, tecnica
+    private String tipo;
     private int custoSangue;
     private int bonusValor;
 

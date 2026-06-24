@@ -34,9 +34,6 @@ public class NomeJogadorController {
             return;
         }
 
-        // Toda a comunicacao com o banco roda em uma thread separada,
-        // para nao bloquear a interface (JavaFX Application Thread) caso
-        // o PostgreSQL esteja lento ou inacessivel.
         Task<Jogador> task = new Task<>() {
             @Override
             protected Jogador call() throws Exception {

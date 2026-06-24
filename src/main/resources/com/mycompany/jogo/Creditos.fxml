@@ -4,7 +4,7 @@
 <?import javafx.geometry.*?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.sinodevesper.controller.CreditosController"
+      fx:controller="com.mycompany.jogo.controller.CreditosController"
       styleClass="tela-fundo"
       alignment="CENTER"
       spacing="18"
@@ -18,7 +18,7 @@
     <Region minHeight="20"/>
 
     <Label text="Desenvolvido por" styleClass="label-info"/>
-    <Label fx:id="labelDupla" text="Nome 1 &amp; Nome 2" styleClass="creditos-destaque"/>
+    <Label fx:id="labelDupla" text="Lucas Lopes &amp; Guilherme Rotela" styleClass="creditos-destaque"/>
 
     <Region minHeight="10"/>
 

@@ -1,9 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
-package com.mycompany.jogo.controller;
 
+package com.mycompany.jogo.controller;
 import com.mycompany.jogo.DAO.ItemDAO;
 import com.mycompany.jogo.model.Item;
 import com.mycompany.jogo.model.Jogador;
@@ -17,37 +13,32 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
-
-/**
- * FXML Controller class
- *
- * @author aluno
- */
 public class InventarioController implements Initializable {
-
     @FXML private Label            labelJogador;
     @FXML private ListView<String> listaArmas;
     @FXML private ListView<String> listaArmaduras;
     @FXML private ListView<String> listaPocoes;
-
     private final ItemDAO itemDAO = new ItemDAO();
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         Jogador j = Sessao.getInstance().getJogadorAtual();
         if (j == null) return;
-
         labelJogador.setText(j.getNome() + "  ·  Nível " + j.getNivel()
             + "  ·  🩸 " + j.getPontosSangue());
-
         try {
             List<Item> inventario = itemDAO.listarInventario(j.getId());
             for (Item item : inventario) {
                 String linha = item.getNome() + "  (x" + item.getQuantidade() + ")";
                 switch (item.getTipo()) {
-                    case ARMA: listaArmas.getItems().add(linha);
-                    case ARMADURA: listaArmaduras.getItems().add(linha);
-                    case POCAO: listaPocoes.getItems().add(linha);
+                    case ARMA: 
+                        listaArmas.getItems().add(linha);
+                    break;
+                    case ARMADURA: 
+                        listaArmaduras.getItems().add(linha);
+                    break;
+                    case POCAO: 
+                        listaPocoes.getItems().add(linha);
+                    break;
                 }
             }
             if (listaArmas.getItems().isEmpty())     listaArmas.getItems().add("— Nenhuma arma —");
@@ -57,7 +48,6 @@ public class InventarioController implements Initializable {
             e.printStackTrace();
         }
     }
-
     @FXML
     private void onFechar() {
         Stage stage = (Stage) labelJogador.getScene().getWindow();

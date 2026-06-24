@@ -1,6 +1,4 @@
-
 package com.mycompany.jogo.DAO;
-
 import com.mycompany.jogo.model.Item;
 import com.mycompany.jogo.util.Conexao;
 import java.sql.PreparedStatement;
@@ -9,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
 /**
  *
  * @author Lucas
@@ -33,7 +30,6 @@ public class ItemDAO {
         }
         return lista;
     }
-
     public List<Item> listarInventario(int jogadorId) throws SQLException {
         List<Item> lista = new ArrayList<>();
         String sql = "SELECT il.*, inv.quantidade FROM inventario inv " +
@@ -57,7 +53,6 @@ public class ItemDAO {
         }
         return lista;
     }
-
     public void comprar(int jogadorId, int itemId) throws SQLException {
         String sql = "INSERT INTO inventario (jogador_id, item_id) VALUES (?,?) " +
                      "ON CONFLICT DO NOTHING";

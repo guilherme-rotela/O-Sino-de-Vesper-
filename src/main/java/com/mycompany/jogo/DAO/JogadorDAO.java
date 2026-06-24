@@ -7,7 +7,6 @@ import java.sql.*;
 
 public class JogadorDAO {
 
-    /** Busca jogador pelo nome. Retorna null se não existir. */
     public Jogador buscarPorNome(String nome) throws SQLException {
         String sql = "SELECT j.id, j.nome, ja.vitalidade, ja.vigor, ja.tecnica, " +
                      "ja.pontos_sangue, ja.total_xp, ja.nivel " +
@@ -27,13 +26,10 @@ public class JogadorDAO {
         }
         return null;
     }
-
-    /** Cria novo jogador com atributos iniciais. Retorna o jogador criado. */
     public Jogador criar(String nome) throws SQLException {
         Connection conn = Conexao.getConnection();
         conn.setAutoCommit(false);
         try {
-            // Insere jogador
             String sqlJ = "INSERT INTO jogadores (nome) VALUES (?) RETURNING id";
             int jogadorId;
             try (PreparedStatement ps = conn.prepareStatement(sqlJ)) {
@@ -42,7 +38,6 @@ public class JogadorDAO {
                 rs.next();
                 jogadorId = rs.getInt("id");
             }
-            // Insere atributos iniciais
             String sqlA = "INSERT INTO jogador_atributos (jogador_id) VALUES (?)";
             try (PreparedStatement ps = conn.prepareStatement(sqlA)) {
                 ps.setInt(1, jogadorId);
@@ -58,7 +53,6 @@ public class JogadorDAO {
         }
     }
 
-    /** Salva atributos atuais do jogador no banco */
     public void salvarAtributos(Jogador j) throws SQLException {
         String sql = "UPDATE jogador_atributos SET vitalidade=?, vigor=?, tecnica=?, " +
                      "pontos_sangue=?, total_xp=?, nivel=? WHERE jogador_id=?";
@@ -74,7 +68,6 @@ public class JogadorDAO {
         }
     }
 
-    /** Salva histórico de uma partida */
     public void salvarPartida(int jogadorId, int faseAlcancada, int inimigosMortos,
                                int sangueGanho, int xpGanho, boolean vitoria) throws SQLException {
         String sql = "INSERT INTO partidas (jogador_id, fase_alcancada, inimigos_mortos, " +

@@ -17,7 +17,7 @@ public class Inimigo {
     private int recompensaSangue;
     private int recompensaXp;
  
-    // Posição no mapa (usada pelo GameplayController)
+    // Posição no mapa 
     private double x;
     private double y;
  
@@ -30,7 +30,6 @@ public class Inimigo {
     }
  
     private void configurar(Tipo tipo, int fase) {
-        // Escala de dificuldade: cada fase aumenta 20% dos atributos
         double escala = 1.0 + (fase - 1) * 0.2;
  
         switch (tipo) {
@@ -52,7 +51,7 @@ public class Inimigo {
             break;
             case BOSS_CATEDRAL:
                 this.nome = "O Sacerdote do Sino";
-                this.vidaMaxima = (int)(500 * escala);
+                this.vidaMaxima = (int)(10000 * escala);
                 this.dano = (int)(30  * escala);
                 this.velocidade = 2;
                 this.recompensaSangue = (int)(500 * escala);

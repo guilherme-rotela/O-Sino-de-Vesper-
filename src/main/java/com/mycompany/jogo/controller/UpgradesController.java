@@ -127,7 +127,6 @@ public class UpgradesController implements Initializable {
         btn.setText("✓ Adquirido");
         btn.setDisable(true);
         atualizarCabecalho();
-        // Atualizar botões de outros cards (saldo mudou)
         carregarUpgrades();
     }
 

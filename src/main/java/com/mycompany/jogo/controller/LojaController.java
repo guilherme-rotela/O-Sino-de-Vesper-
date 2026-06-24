@@ -6,7 +6,6 @@ import com.mycompany.jogo.DAO.ItemDAO;
 import com.mycompany.jogo.DAO.JogadorDAO;
 import com.mycompany.jogo.model.Item;
 import com.mycompany.jogo.util.Sessao;
-import com.mycompany.jogo.util.SceneManager;
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -87,10 +86,13 @@ public class LojaController implements Initializable {
         Label custo = new Label("🩸 " + item.getCustoSangue());
         custo.getStyleClass().add("card-item-custo");
 
-        boolean semSaldo = jogador().getPontosSangue() < item.getCustoSangue();
-        Button btn = new Button("Comprar");
+        boolean ehUnicoUso = item.getTipo() == Item.Tipo.ARMA || item.getTipo() == Item.Tipo.ARMADURA;
+        boolean jaComprou  = ehUnicoUso && Sessao.getInstance().jaComprou(item.getId());
+        boolean semSaldo   = jogador().getPontosSangue() < item.getCustoSangue();
+
+        Button btn = new Button(jaComprou ? "Equipado ✓" : "Comprar");
         btn.getStyleClass().add("btn-acao");
-        btn.setDisable(semSaldo);
+        btn.setDisable(jaComprou || semSaldo);
         btn.setOnAction(e -> comprar(item, btn));
 
         HBox rodape = new HBox(8);
@@ -103,21 +105,26 @@ public class LojaController implements Initializable {
     }
 
     private void comprar(Item item, Button btn) {
+        boolean ehUnicoUso = item.getTipo() == Item.Tipo.ARMA || item.getTipo() == Item.Tipo.ARMADURA;
+
+        if (ehUnicoUso && Sessao.getInstance().jaComprou(item.getId())) {
+            mostrarFeedback("Este item já está equipado!");
+            return;
+        }
+
         Jogador j = jogador();
         if (!j.gastarSangue(item.getCustoSangue())) {
             mostrarFeedback("Sangue insuficiente!");
             return;
         }
 
-        // Aplicar efeito imediato de poções
-        if (item.getTipo() == Item.Tipo.POCAO && item.getBonusAtributo() != null) {
+        if (item.getBonusAtributo() != null) {
             switch (item.getBonusAtributo()) {
-                case "vitalidade":
-                    j.curar(item.getBonusValor());
-                    break;
-                case "vigor": 
-                    j.recuperarVigor(item.getBonusValor());
-                    break;
+                case "vitalidade": j.aumentarVitalidade(item.getBonusValor()); break;
+                case "vigor":      j.aumentarVigor(item.getBonusValor());      break;
+                case "tecnica":    j.aumentarTecnica(item.getBonusValor());    break;
+                case "cura":
+                    if (item.getTipo() == Item.Tipo.POCAO) j.curar(item.getBonusValor()); break;
             }
         }
 
@@ -126,6 +133,12 @@ public class LojaController implements Initializable {
             jogadorDAO.salvarAtributos(j);
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        if (ehUnicoUso) {
+            Sessao.getInstance().registrarCompra(item.getId());
+            btn.setText("Equipado ✓");
+            btn.setDisable(true);
         }
 
         mostrarFeedback("✓ " + item.getNome() + " adquirido!");

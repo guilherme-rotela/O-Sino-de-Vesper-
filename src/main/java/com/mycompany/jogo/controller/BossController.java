@@ -4,7 +4,6 @@ import com.mycompany.jogo.App;
 import com.mycompany.jogo.DAO.JogadorDAO;
 import com.mycompany.jogo.model.Inimigo;
 import com.mycompany.jogo.model.Jogador;
-import com.mycompany.jogo.util.SceneManager;
 import com.mycompany.jogo.util.Sessao;
 import com.mycompany.jogo.util.SpriteAnimacao;
 import java.io.IOException;
@@ -33,7 +32,7 @@ import javafx.scene.layout.StackPane;
 
 public class BossController implements Initializable {
 
-    // ── FXML ──────────────────────────────────────────────────────────────────
+    //FXML
     @FXML private Canvas      canvasBoss;
     @FXML private Pane        spritePane;
     @FXML private ProgressBar barraBoss, barraVida, barraVigor;
@@ -42,41 +41,65 @@ public class BossController implements Initializable {
     @FXML private Label       labelResultado, labelResultadoDesc;
     @FXML private Button      btnResultado;
 
-    // ── Sprites ───────────────────────────────────────────────────────────────
+    //Sprites
     private ImageView jogadorSprite;
     private ImageView bossSprite;
 
-    // ── Imagens estáticas do jogador ──────────────────────────────────────────
+    //Imagens estáticas do jogador
     private Image imgJogador;
     private Image imgJogadorFrente;
     private Image imgJogadorTras;
     private Image imgJogadorEsquerda;
 
-    // ── Spritesheets do jogador ───────────────────────────────────────────────
+    //Spritesheets do jogador
     private Image sheetAndando;
     private Image sheetAndandoEsquerda;
     private Image sheetAtaque;
     private Image sheetAtaqueEsquerda;
 
-    // ── Animações do jogador ──────────────────────────────────────────────────
+    //Animações do jogador
     private SpriteAnimacao animAndando;
     private SpriteAnimacao animAndandoEsquerda;
     private SpriteAnimacao animAtaque;
     private SpriteAnimacao animAtaqueEsquerda;
 
-    // ── Direção do jogador ────────────────────────────────────────────────────
+    //Direção do jogador
     private String direcaoJogador = "frente";
 
-    // ── Imagen do boss ────────────────────────────────────────────
+    
     private Image imgBoss;
 
-    // ── Tamanhos dos sprites ──────────────────────────────────────────────────
-    private static final double JOG_SPRITE_W  = 64;
-    private static final double JOG_SPRITE_H  = 64;
-    private static final double BOSS_SPRITE_W = 72;
-    private static final double BOSS_SPRITE_H = 72;
+    //Spritesheets do boss
+    private Image sheetBossAndarFrente;
+    private Image sheetBossAndarTras;
+    private Image sheetBossAndarEsquerda;
+    private Image sheetBossAndarDireita;
+    private Image sheetBossAtaqueEsquerda;
+    private Image sheetBossAtaqueDireita;
 
-    // ── Estado do jogador ─────────────────────────────────────────────────────
+    //Animações do boss
+    private SpriteAnimacao animBossAndarFrente;
+    private SpriteAnimacao animBossAndarTras;
+    private SpriteAnimacao animBossAndarEsquerda;
+    private SpriteAnimacao animBossAndarDireita;
+    private SpriteAnimacao animBossAtaqueEsquerda;
+    private SpriteAnimacao animBossAtaqueDireita;
+
+    //Direção / estado do boss
+    private String direcaoBoss = "frente";
+
+    private boolean bossAtacando     = false;
+    private long    bossAtaqueInicio = 0;
+    private static final long BOSS_ATAQUE_DUR = 600_000_000L; 
+    private String  bossAtaqueLado   = "direita"; 
+
+    //Tamanhos dos sprites
+    private static final double JOG_SPRITE_W  = 96;
+    private static final double JOG_SPRITE_H  = 96;
+    private static final double BOSS_SPRITE_W = 160;
+    private static final double BOSS_SPRITE_H = 160;
+
+    //Estado do jogador
     private double jogX, jogY;
     private static final double JOG_SIZE  = 20;
     private static final double JOG_SPEED = 3.0;
@@ -89,16 +112,21 @@ public class BossController implements Initializable {
     private long    ataqueInicio = 0;
     private static final long ATAQUE_DUR = 300_000_000L;
 
-    // ── Teclas ────────────────────────────────────────────────────────────────
+    //Recuperação de vigor
+    private long ultimaRecuperacaoVigor = 0;
+    private static final long INTERVALO_RECUPERACAO_VIGOR = 500_000_000L;
+
+    //Teclas
     private final Set<KeyCode> teclas = new HashSet<>();
 
-    // ── Boss ──────────────────────────────────────────────────────────────────
+    //Boss
     private Inimigo boss;
     private double  bossX, bossY;
-    private static final double BOSS_SIZE = 36;
+    private static final double BOSS_SIZE = 55;
+    private static final double BOSS_ALCANCE_ATAQUE = JOG_SIZE + BOSS_SIZE + 10;
 
 
-    // ── Game loop ─────────────────────────────────────────────────────────────
+    //Game loop
     private boolean fase2     = false;
     private AnimationTimer loop;
     private boolean emBatalha = true;
@@ -107,7 +135,6 @@ public class BossController implements Initializable {
 
     private final JogadorDAO jogadorDAO = new JogadorDAO();
 
-    // ── initialize ────────────────────────────────────────────────────────────
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         boss = new Inimigo(Inimigo.Tipo.BOSS_CATEDRAL, Sessao.getInstance().getFaseAtual());
@@ -116,11 +143,7 @@ public class BossController implements Initializable {
 
         jogadorSprite  = criarImageView(imgJogador,  JOG_SPRITE_W,  JOG_SPRITE_H);
         bossSprite     = criarImageView(imgBoss,     BOSS_SPRITE_W, BOSS_SPRITE_H);
-        
-        jogadorSprite  = criarImageView(imgJogador,  JOG_SPRITE_W,  JOG_SPRITE_H);
-        bossSprite     = criarImageView(imgBoss,     BOSS_SPRITE_W, BOSS_SPRITE_H);
 
-        // ← adicione estas duas linhas:
         spritePane.getChildren().add(jogadorSprite);
         spritePane.getChildren().add(bossSprite);
 
@@ -149,7 +172,7 @@ public class BossController implements Initializable {
         spritePane.prefWidthProperty().bind(sp.widthProperty());
         spritePane.prefHeightProperty().bind(sp.heightProperty());
 
-        // Listener para quando o tamanho finalmente chegar
+
         sp.widthProperty().addListener((obs, o, n) -> {
             if (n.doubleValue() > 0 && !inicializado) tentarIniciar();
         });
@@ -176,7 +199,7 @@ public class BossController implements Initializable {
     }
  
 
-    // ── Carregamento de imagens ───────────────────────────────────────────────
+    //Carregamento de imagens
     private void carregarImagens() {
         // Imagens estáticas do jogador
         imgJogador         = carregarImagem("jogador.png");
@@ -203,8 +226,36 @@ public class BossController implements Initializable {
             animAtaqueEsquerda.setLoop(false);
         }
 
-        // Boss
-        imgBoss     = carregarImagem("boss.png");
+        
+        imgBoss = carregarImagem("boss.png");
+
+        
+        sheetBossAndarFrente   = carregarImagem("BossAndarFrente.png");
+        sheetBossAndarTras     = carregarImagem("BossAndarTras.png");
+        sheetBossAndarEsquerda = carregarImagem("BossAndarEsquerda.png");
+        sheetBossAndarDireita  = carregarImagem("BossAndarDireita.png");
+
+        
+        sheetBossAtaqueEsquerda = carregarImagem("BossAtaqueEsquerda.png");
+        sheetBossAtaqueDireita  = carregarImagem("BossAtaqueDireita.png");
+
+        if (sheetBossAndarFrente != null)
+            animBossAndarFrente = new SpriteAnimacao(sheetBossAndarFrente, 8, 10);
+        if (sheetBossAndarTras != null)
+            animBossAndarTras = new SpriteAnimacao(sheetBossAndarTras, 8, 10);
+        if (sheetBossAndarEsquerda != null)
+            animBossAndarEsquerda = new SpriteAnimacao(sheetBossAndarEsquerda, 8, 10);
+        if (sheetBossAndarDireita != null)
+            animBossAndarDireita = new SpriteAnimacao(sheetBossAndarDireita, 8, 10);
+
+        if (sheetBossAtaqueEsquerda != null) {
+            animBossAtaqueEsquerda = new SpriteAnimacao(sheetBossAtaqueEsquerda, 15, 20);
+            animBossAtaqueEsquerda.setLoop(false);
+        }
+        if (sheetBossAtaqueDireita != null) {
+            animBossAtaqueDireita = new SpriteAnimacao(sheetBossAtaqueDireita, 15, 20);
+            animBossAtaqueDireita.setLoop(false);
+        }
     }
 
     private Image carregarImagem(String nome) {
@@ -217,7 +268,7 @@ public class BossController implements Initializable {
         return null;
     }
 
-    // ── Utilitário de sprite ──────────────────────────────────────────────────
+    //Utilitário de sprite
     private ImageView criarImageView(Image img, double w, double h) {
         ImageView iv = new ImageView();
         if (img != null) iv.setImage(img);
@@ -233,7 +284,7 @@ public class BossController implements Initializable {
         iv.setLayoutY(cy - h / 2.0);
     }
 
-    // ── Teclado ───────────────────────────────────────────────────────────────
+    //Teclado
     private void configurarTeclado() {
         canvasBoss.sceneProperty().addListener((obs, old, novo) -> {
             if (novo != null) {
@@ -245,13 +296,13 @@ public class BossController implements Initializable {
         canvasBoss.setFocusTraversable(true);
     }
 
-    // ── Game loop ─────────────────────────────────────────────────────────────
+    //Game loop
     private void iniciarLoop() {
         loop = new AnimationTimer() {
             @Override public void handle(long agora) {
                 if (!emBatalha) return;
                 processarEntrada(agora);
-                moverBoss();
+                moverBoss(agora);
                 verificarAtaqueJogador(agora);
                 verificarColisoes(agora);
                 renderizar(agora);
@@ -263,7 +314,6 @@ public class BossController implements Initializable {
         loop.start();
     }
 
-    // ── Lógica ───────────────────────────────────────────────────────────────
     private void processarEntrada(long agora) {
         if (teclas.contains(KeyCode.K) && !esquivando) {
             Jogador j = jogador();
@@ -293,23 +343,46 @@ public class BossController implements Initializable {
         jogX = nx;
         jogY = ny;
 
-        // Atualiza direção com base nas teclas pressionadas
+        
         if (teclas.contains(KeyCode.W)) direcaoJogador = "tras";
         if (teclas.contains(KeyCode.S)) direcaoJogador = "frente";
         if (teclas.contains(KeyCode.D)) direcaoJogador = "direita";
         if (teclas.contains(KeyCode.A)) direcaoJogador = "esquerda";
 
-        jogador().recuperarVigor(1);
+        if (agora - ultimaRecuperacaoVigor >= INTERVALO_RECUPERACAO_VIGOR) {
+            jogador().recuperarVigor(1);
+            ultimaRecuperacaoVigor = agora;
+        }
     }
 
-    private void moverBoss() {
+    private void moverBoss(long agora) {
         double vel = fase2 ? boss.getVelocidade() * 1.8 : boss.getVelocidade();
         double dx = jogX - bossX, dy = jogY - bossY;
         double dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist > 0) {
+
+       
+        if (!bossAtacando && dist > 0) {
             bossX += (dx / dist) * vel;
             bossY += (dy / dist) * vel;
+
+            
+            if (Math.abs(dx) > Math.abs(dy)) {
+                direcaoBoss = dx >= 0 ? "direita" : "esquerda";
+            } else {
+                direcaoBoss = dy >= 0 ? "frente" : "tras";
+            }
         }
+
+        
+        if (!bossAtacando && dist <= BOSS_ALCANCE_ATAQUE) {
+            bossAtacando = true;
+            bossAtaqueInicio = agora;
+            bossAtaqueLado = (dx >= 0) ? "direita" : "esquerda";
+        }
+        if (bossAtacando && agora - bossAtaqueInicio > BOSS_ATAQUE_DUR) {
+            bossAtacando = false;
+        }
+
         if (!fase2 && boss.getPorcentagemVida() < 0.5) fase2 = true;
     }
 
@@ -334,7 +407,8 @@ public class BossController implements Initializable {
         if (agora - ultimoDanoRecebido < INTERVALO_DANO) return;
 
         double dist = Math.sqrt(Math.pow(bossX - jogX, 2) + Math.pow(bossY - jogY, 2));
-        if (dist < JOG_SIZE + BOSS_SIZE) {
+       
+        if (bossAtacando && dist < JOG_SIZE + BOSS_SIZE) {
             jogador().receberDano(boss.getDano());
             ultimoDanoRecebido = agora;
         }
@@ -347,7 +421,6 @@ public class BossController implements Initializable {
         }
     }
 
-    // ── Renderização (canvas) ─────────────────────────────────────────────────
     private void renderizar(long agora) {
         GraphicsContext gc = canvasBoss.getGraphicsContext2D();
         double W = canvasBoss.getWidth(), H = canvasBoss.getHeight();
@@ -373,21 +446,16 @@ public class BossController implements Initializable {
         gc.fillText("O Sacerdote do Sino" + (fase2 ? " ☠" : ""),
                     bossX - 70, bossY - BOSS_SPRITE_H / 2 - 10);
 
-        gc.setStroke(Color.web("#cc0000", 0.3));
-        gc.setLineWidth(3);
-        gc.strokeOval(bossX - BOSS_SIZE - 6, bossY - BOSS_SIZE - 6,
-                      (BOSS_SIZE + 6) * 2, (BOSS_SIZE + 6) * 2);
-
         
     }
 
-    // ── Atualização de sprites ────────────────────────────────────────────────
+    //Atualização de sprites
     private void atualizarSprites(long agora) {
         atualizarSpriteJogador(agora);
-        atualizarSpriteBoss();
+        atualizarSpriteBoss(agora);
     }
 
-    /** Espelho exato do atualizarSpriteJogador() do GameplayController */
+   
     private void atualizarSpriteJogador(long agora) {
         boolean movendo = teclas.contains(KeyCode.W)
                        || teclas.contains(KeyCode.S)
@@ -429,7 +497,38 @@ public class BossController implements Initializable {
         posicionarSprite(jogadorSprite, jogX, jogY, JOG_SPRITE_W, JOG_SPRITE_H);
     }
 
-    private void atualizarSpriteBoss() {
+    private void atualizarSpriteBoss(long agora) {
+        if (bossAtacando) {
+            SpriteAnimacao animAtual = "esquerda".equals(bossAtaqueLado)
+                    ? animBossAtaqueEsquerda
+                    : animBossAtaqueDireita;
+
+            if (animAtual != null) {
+                if (animAtual.isFinalizado()) animAtual.reiniciar();
+                animAtual.atualizar(agora, bossSprite);
+            } else if (imgBoss != null) {
+                bossSprite.setImage(imgBoss);
+            }
+
+            // Reinicia a animação de andar parada do lado contrário, pra não "pular" frame ao voltar a andar
+            reiniciarAnimacoesAndarBoss();
+        } else {
+            SpriteAnimacao animAtual;
+            switch (direcaoBoss) {
+                case "esquerda": animAtual = animBossAndarEsquerda; break;
+                case "direita":  animAtual = animBossAndarDireita;  break;
+                case "tras":     animAtual = animBossAndarTras;     break;
+                default:         animAtual = animBossAndarFrente;   break;
+            }
+
+            if (animAtual != null) {
+                if (animAtual.isFinalizado()) animAtual.reiniciar();
+                animAtual.atualizar(agora, bossSprite);
+            } else if (imgBoss != null) {
+                bossSprite.setImage(imgBoss);
+            }
+        }
+
         double bossOpacidade = fase2
             ? (System.nanoTime() / 150_000_000L % 2 == 0 ? 0.7 : 1.0)
             : 1.0;
@@ -437,8 +536,15 @@ public class BossController implements Initializable {
         posicionarSprite(bossSprite, bossX, bossY, BOSS_SPRITE_W, BOSS_SPRITE_H);
     }
 
+    private void reiniciarAnimacoesAndarBoss() {
+        if (animBossAndarFrente != null)   animBossAndarFrente.reiniciar();
+        if (animBossAndarTras != null)     animBossAndarTras.reiniciar();
+        if (animBossAndarEsquerda != null) animBossAndarEsquerda.reiniciar();
+        if (animBossAndarDireita != null)  animBossAndarDireita.reiniciar();
+    }
 
-    // ── HUD ───────────────────────────────────────────────────────────────────
+
+    //HUD
     private void atualizarHUD() {
         Jogador j = jogador();
         barraBoss.setProgress(boss.getPorcentagemVida());
@@ -450,7 +556,7 @@ public class BossController implements Initializable {
         labelSangue.setText("🩸 " + j.getPontosSangue());
     }
 
-    // ── Condições ─────────────────────────────────────────────────────────────
+    //Condições
     private void verificarCondicoes() {
         if (!jogador().estaVivo()) {
             emBatalha = false;
@@ -459,7 +565,7 @@ public class BossController implements Initializable {
         }
     }
 
-    // ── Resultado ─────────────────────────────────────────────────────────────
+    //Resultado
     private void onVitoria() {
         Sessao gs = Sessao.getInstance();
         gs.registrarInimigomorto(boss.getRecompensaSangue(), boss.getRecompensaXp());
@@ -487,7 +593,7 @@ public class BossController implements Initializable {
         }
     }
 
-    // ── Persistência ──────────────────────────────────────────────────────────
+    //Persistência
     private void salvarPartida(boolean vitoria) {
         try {
             Sessao gs = Sessao.getInstance();
@@ -499,7 +605,6 @@ public class BossController implements Initializable {
         }
     }
 
-    // ── Utilitários ───────────────────────────────────────────────────────────
     private Jogador jogador() {
         return Sessao.getInstance().getJogadorAtual();
     }

@@ -5,7 +5,7 @@ public class Jogador {
     private int id;
     private String nome;
  
-    // Atributos base (persistidos)
+    // Atributos base 
     private int vitalidade;
     private int vigor;
     private int tecnica;
@@ -13,7 +13,7 @@ public class Jogador {
     private int totalXp;
     private int nivel;
  
-    // Estado dinâmico durante a run (calculado a partir dos atributos)
+    // Estado dinâmico durante a run 
     private int vidaMaxima;
     private int vidaAtual;
     private int vigorMaximo;
@@ -33,7 +33,7 @@ public class Jogador {
         calcularAtributosDerivados();
     }
  
-    /** Recalcula vida/vigor/dano com base nos atributos base */
+
     public void calcularAtributosDerivados() {
         this.vidaMaxima  = 50 + (vitalidade * 5);
         this.vidaAtual   = vidaMaxima;
@@ -41,8 +41,7 @@ public class Jogador {
         this.vigorAtual  = vigorMaximo;
         this.dano        = 5  + (tecnica * 2);
     }
- 
-    /** Reseta vida e vigor para o início de uma nova run */
+
     public void resetarParaRun() {
         calcularAtributosDerivados();
     }

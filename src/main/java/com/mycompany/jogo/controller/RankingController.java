@@ -3,7 +3,6 @@ package com.mycompany.jogo.controller;
 import com.mycompany.jogo.App;
 import com.mycompany.jogo.DAO.RankingDAO;
 import com.mycompany.jogo.model.Ranking;
-import com.mycompany.jogo.util.SceneManager;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;

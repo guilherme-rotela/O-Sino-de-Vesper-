@@ -1,12 +1,11 @@
 package com.mycompany.jogo.util;
 
 import com.mycompany.jogo.model.Jogador;
+import java.util.HashSet;
+import java.util.Set;
 
 
-/**
- * Singleton que mantém o estado da sessão atual do jogo.
- * Compartilhado entre todos os controllers durante uma execução.
- */
+
 public class Sessao {
 
     private static Sessao instance;
@@ -44,6 +43,16 @@ public class Sessao {
             jogadorAtual.adicionarSangue(sangue);
             jogadorAtual.adicionarXp(xp);
         }
+    }
+    
+    private final Set<Integer> itensCompradosNaRun = new HashSet<>();
+
+    public boolean jaComprou(int itemId) {
+        return itensCompradosNaRun.contains(itemId);
+    }
+
+    public void registrarCompra(int itemId) {
+        itensCompradosNaRun.add(itemId);
     }
 
     public void avancarFase() {
