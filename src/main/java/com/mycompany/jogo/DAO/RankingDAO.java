@@ -11,7 +11,7 @@ public class RankingDAO {
 
     public List<Ranking> listar() throws SQLException {
         List<Ranking> lista = new ArrayList<>();
-        String sql = "SELECT * FROM ranking LIMIT 20";
+        String sql = "SELECT * FROM ranking ORDER BY total_xp DESC LIMIT 20";
         try (Statement st = Conexao.getConnection().createStatement();
              ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) {

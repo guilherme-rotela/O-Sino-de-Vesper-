@@ -122,6 +122,14 @@ public class UpgradesController implements Initializable {
             jogadorDAO.salvarAtributos(j);
         } catch (SQLException e) {
             e.printStackTrace();
+            j.adicionarSangue(up.getCustoSangue());
+            switch (up.getTipo()) {
+                case "vitalidade": j.aumentarVitalidade(-up.getBonusValor()); break;
+                case "vigor":      j.aumentarVigor(-up.getBonusValor());      break;
+                case "tecnica":    j.aumentarTecnica(-up.getBonusValor());    break;
+            }
+            atualizarCabecalho();
+            return;
         }
 
         btn.setText("✓ Adquirido");
@@ -131,7 +139,7 @@ public class UpgradesController implements Initializable {
     }
 
     @FXML private void onIrLoja() throws IOException{
-        App.setRoot("Gameplay");
+        App.setRoot("Loja");
     }
     @FXML private void onContinuar() throws IOException {
         App.setRoot("Gameplay");

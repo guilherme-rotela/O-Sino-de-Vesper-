@@ -133,8 +133,18 @@ public class LojaController implements Initializable {
             jogadorDAO.salvarAtributos(j);
         } catch (SQLException e) {
             e.printStackTrace();
+            j.adicionarSangue(item.getCustoSangue());
+            if (item.getBonusAtributo() != null) {
+                switch (item.getBonusAtributo()) {
+                    case "vitalidade": j.aumentarVitalidade(-item.getBonusValor()); break;
+                    case "vigor":      j.aumentarVigor(-item.getBonusValor());      break;
+                    case "tecnica":    j.aumentarTecnica(-item.getBonusValor());    break;
+                }
+            }
+            mostrarFeedback("Erro ao salvar a compra. Verifique o banco de dados.");
+            atualizarSangue();
+            return;
         }
-
         if (ehUnicoUso) {
             Sessao.getInstance().registrarCompra(item.getId());
             btn.setText("Equipado ✓");

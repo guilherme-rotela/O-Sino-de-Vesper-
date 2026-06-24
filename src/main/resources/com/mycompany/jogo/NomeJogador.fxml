@@ -25,8 +25,8 @@
     <Label fx:id="labelErro" styleClass="label-sangue" text="" visible="false"/>
 
     <HBox alignment="CENTER" spacing="16">
-        <Button text="ENTRAR EM VESPER" styleClass="btn-acao" onAction="#onConfirmar"/>
-        <Button text="Voltar" styleClass="btn-voltar" onAction="#onVoltar"/>
+        <Button fx:id="btnConfirmar" text="ENTRAR EM VESPER" styleClass="btn-acao" onAction="#onConfirmar"/>
+        <Button fx:id="btnVoltar" text="Voltar" styleClass="btn-voltar" onAction="#onVoltar"/>
     </HBox>
 
     <Label text="Se já jogou antes, seu progresso será carregado automaticamente."

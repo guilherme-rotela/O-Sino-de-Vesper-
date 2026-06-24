@@ -1,48 +1,14 @@
-
- 
-/* ══════════════════════════════════════════════════════════════
-   VARIÁVEIS / TOKENS
-   ══════════════════════════════════════════════════════════════ */
-/*
-    --fundo-abissal    : #0a0505
-    --fundo-superfície : #120808
-    --painel           : #1a0d0d
-    --painel-hover     : #220f0f
-    --borda-sutil      : #2e1515
-    --borda-ativa      : #5c1a1a
-    --carmesim         : #8b0000
-    --carmesim-vivo    : #b30000
-    --ouro             : #c8a96e
-    --ouro-escuro      : #8a6a3a
-    --roxo             : #4a3f6b
-    --pergaminho       : #e8d5b7
-    --cinza-morto      : #6b5a5a
-*/
- 
-/* ══════════════════════════════════════════════════════════════
-   ROOT / TELA
-   ══════════════════════════════════════════════════════════════ */
- 
 .root {
     -fx-background-color: #0a0505;
     -fx-font-family: "IM Fell English", "Georgia", serif;
     -fx-font-size: 14px;
 }
  
-/* ══════════════════════════════════════════════════════════════
-   FUNDO DAS TELAS
-   ══════════════════════════════════════════════════════════════ */
- 
 .tela-fundo {
     -fx-background-color: #0a0505;
     -fx-background-radius: 0;
 }
- 
-/* ══════════════════════════════════════════════════════════════
-   TIPOGRAFIA
-   ══════════════════════════════════════════════════════════════ */
- 
-/* Título principal de tela */
+
 .label-titulo-tela {
     -fx-font-family: "Cinzel", "Palatino Linotype", serif;
     -fx-font-size: 32px;
@@ -51,7 +17,6 @@
     -fx-effect: dropshadow(gaussian, #8b000088, 12, 0.4, 0, 0);
 }
  
-/* Informações secundárias */
 .label-info {
     -fx-font-family: "IM Fell English", "Georgia", serif;
     -fx-font-size: 14px;
@@ -59,7 +24,6 @@
     -fx-text-fill: #6b5a5a;
 }
  
-/* Sangue / moeda do jogo */
 .label-sangue {
     -fx-font-family: "Share Tech Mono", "Courier New", monospace;
     -fx-font-size: 15px;
@@ -74,11 +38,6 @@
     -fx-text-fill: #c8a96e;
 }
  
-/* ══════════════════════════════════════════════════════════════
-   BOTÕES
-   ══════════════════════════════════════════════════════════════ */
- 
-/* Base compartilhada */
 .button {
     -fx-background-radius: 1px;
     -fx-border-radius: 1px;
@@ -110,7 +69,6 @@
     -fx-effect: dropshadow(gaussian, #8b000033, 4, 0.2, 0, 1);
 }
  
-/* Voltar / secundário */
 .btn-voltar {
     -fx-background-color: #120808;
     -fx-border-color: #2e1515, #4a3f6b;
@@ -126,8 +84,7 @@
 .btn-voltar:pressed {
     -fx-background-color: #0d0505;
 }
- 
-/* Menu / navegação */
+
 .btn-menu {
     -fx-background-color: #1a1020;
     -fx-border-color: #2e1a3e, #4a3f6b;
@@ -141,7 +98,6 @@
     -fx-text-fill: #c8a96e;
 }
  
-/* Perigo / encerrar */
 .btn-hud-perigo {
     -fx-background-color: transparent;
     -fx-border-color: #3d0000;
@@ -157,10 +113,6 @@
 .btn-hud-perigo:pressed {
     -fx-background-color: #0d0000;
 }
- 
-/* ══════════════════════════════════════════════════════════════
-   CAMPOS DE TEXTO
-   ══════════════════════════════════════════════════════════════ */
  
 .campo-texto,
 .text-field {
@@ -180,10 +132,6 @@
     -fx-border-color: #8b0000;
     -fx-effect: dropshadow(gaussian, #8b000066, 8, 0.3, 0, 0);
 }
- 
-/* ══════════════════════════════════════════════════════════════
-   BARRAS DE PROGRESSO (vida / vigor / boss)
-   ══════════════════════════════════════════════════════════════ */
  
 .progress-bar {
     -fx-background-color: #0d0505;
@@ -209,9 +157,6 @@
     -fx-background-color: linear-gradient(to right, #1a1030, #4a3f6b, #6a5a9b);
 }
  
-/* ══════════════════════════════════════════════════════════════
-   TABELAS (ranking)
-   ══════════════════════════════════════════════════════════════ */
  
 .tabela-ranking,
 .table-view {
@@ -272,9 +217,7 @@
     -fx-font-style: italic;
 }
  
-/* ══════════════════════════════════════════════════════════════
-   LIST VIEW (inventário)
-   ══════════════════════════════════════════════════════════════ */
+
  
 .list-view {
     -fx-background-color: #0d0505;
@@ -305,9 +248,7 @@
     -fx-background-color: #1a0808;
 }
  
-/* ══════════════════════════════════════════════════════════════
-   TABS (loja / inventário / upgrades)
-   ══════════════════════════════════════════════════════════════ */
+
  
 .tab-pane {
     -fx-background-color: transparent;
@@ -358,11 +299,7 @@
     -fx-border-color: #2e1515;
     -fx-border-width: 0 1px 1px 1px;
 }
- 
-/* ══════════════════════════════════════════════════════════════
-   SCROLL PANE
-   ══════════════════════════════════════════════════════════════ */
- 
+
 .scroll-pane {
     -fx-background-color: transparent;
     -fx-background: transparent;
@@ -401,25 +338,37 @@
 .scroll-bar .decrement-arrow {
     -fx-background-color: #4a3030;
 }
- 
-/* ══════════════════════════════════════════════════════════════
-   HUD DE GAMEPLAY
-   ══════════════════════════════════════════════════════════════ */
- 
-.hud-panel {
+
+.hud-panel,
+.hud-painel {
     -fx-background-color: #0d050599;
     -fx-border-color: #2e1515;
     -fx-border-width: 0 0 1px 0;
     -fx-padding: 6 16 6 16;
 }
  
-.label-hud {
+.hud-rodape {
+    -fx-background-color: #0d050599;
+    -fx-border-color: #2e1515;
+    -fx-border-width: 1px 0 0 0;
+    -fx-padding: 6 16 6 16;
+}
+ 
+.hud-controle {
+    -fx-font-family: "Share Tech Mono", "Courier New", monospace;
+    -fx-font-size: 11px;
+    -fx-text-fill: #6b5a5a;
+}
+ 
+.label-hud,
+.hud-label-titulo {
     -fx-font-family: "Share Tech Mono", "Courier New", monospace;
     -fx-font-size: 12px;
     -fx-text-fill: #8a6a4a;
 }
  
-.label-fase {
+.label-fase,
+.hud-label-fase {
     -fx-font-family: "Cinzel", "Palatino Linotype", serif;
     -fx-font-size: 13px;
     -fx-font-weight: 600;
@@ -427,9 +376,79 @@
     -fx-effect: dropshadow(gaussian, #8b000055, 6, 0.3, 0, 0);
 }
  
-/* ══════════════════════════════════════════════════════════════
-   PAINEL DE MENSAGEM / RESULTADO
-   ══════════════════════════════════════════════════════════════ */
+.hud-label-inimigos {
+    -fx-font-family: "Share Tech Mono", "Courier New", monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: #6b5a5a;
+}
+ 
+.hud-label-sangue {
+    -fx-font-family: "Share Tech Mono", "Courier New", monospace;
+    -fx-font-size: 15px;
+    -fx-text-fill: #cc2222;
+    -fx-effect: dropshadow(gaussian, #cc000066, 6, 0.3, 0, 0);
+}
+ 
+.hud-label-xp {
+    -fx-font-family: "Share Tech Mono", "Courier New", monospace;
+    -fx-font-size: 13px;
+    -fx-text-fill: #c8a96e;
+}
+ 
+.hud-label-valor-vida {
+    -fx-font-family: "Share Tech Mono", "Courier New", monospace;
+    -fx-font-size: 13px;
+    -fx-text-fill: #cc2222;
+}
+ 
+.hud-label-valor-vigor {
+    -fx-font-family: "Share Tech Mono", "Courier New", monospace;
+    -fx-font-size: 13px;
+    -fx-text-fill: #6a5a9b;
+}
+ 
+.btn-hud {
+    -fx-background-color: transparent;
+    -fx-border-color: #4a3030;
+    -fx-border-width: 1px;
+    -fx-text-fill: #8a6a4a;
+}
+.btn-hud:hover {
+    -fx-background-color: #1a0d0d;
+    -fx-border-color: #8b6a3a;
+    -fx-text-fill: #c8a96e;
+}
+ 
+.arena-gameplay {
+    -fx-background-color: #0d0808;
+}
+ 
+.barra-vida > .bar,
+.progress-bar.vida > .bar {
+    -fx-background-color: linear-gradient(to right, #5c0000, #b30000, #cc2222);
+}
+ 
+.subtitulo {
+    -fx-font-family: "Cinzel", "Palatino Linotype", serif;
+    -fx-font-size: 18px;
+    -fx-text-fill: #8a6a4a;
+}
+ 
+.titulo-jogo {
+    -fx-font-family: "Cinzel", "Palatino Linotype", serif;
+    -fx-font-size: 32px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #c8a96e;
+    -fx-effect: dropshadow(gaussian, #8b000088, 12, 0.4, 0, 0);
+}
+ 
+.creditos-destaque {
+    -fx-font-family: "Cinzel", "Palatino Linotype", serif;
+    -fx-font-size: 16px;
+    -fx-text-fill: #e8d5b7;
+}
+ 
+
  
 .painel-mensagem,
 .painel-resultado {
@@ -443,9 +462,22 @@
     -fx-effect: dropshadow(gaussian, #000000cc, 40, 0.8, 0, 0);
 }
  
-/* ══════════════════════════════════════════════════════════════
-   SEPARADORES ORNAMENTAIS
-   ══════════════════════════════════════════════════════════════ */
+.msg-titulo {
+    -fx-font-family: "Cinzel", "Palatino Linotype", serif;
+    -fx-font-size: 28px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #c8a96e;
+    -fx-effect: dropshadow(gaussian, #8b000088, 12, 0.4, 0, 0);
+}
+ 
+.msg-sub {
+    -fx-font-family: "IM Fell English", "Georgia", serif;
+    -fx-font-size: 15px;
+    -fx-text-fill: #cba98a;
+    -fx-text-alignment: center;
+}
+ 
+
  
 .separator {
     -fx-background-color: transparent;
@@ -456,12 +488,10 @@
     -fx-border-color: #2e1515;
     -fx-border-width: 1px 0 0 0;
 }
+
  
-/* ══════════════════════════════════════════════════════════════
-   ITENS DE LOJA / UPGRADE
-   ══════════════════════════════════════════════════════════════ */
- 
-.item-loja {
+.item-loja,
+.card-item {
     -fx-background-color: #120808;
     -fx-border-color: #2e1515;
     -fx-border-width: 1px;
@@ -470,35 +500,36 @@
     -fx-border-radius: 0;
 }
  
-.item-loja:hover {
+.item-loja:hover,
+.card-item:hover {
     -fx-background-color: #1a0d0d;
     -fx-border-color: #5c1a1a;
     -fx-effect: dropshadow(gaussian, #8b000033, 8, 0.2, 0, 0);
 }
  
-.item-nome {
+.item-nome,
+.card-item-nome {
     -fx-font-family: "Cinzel", "Palatino Linotype", serif;
     -fx-font-size: 14px;
     -fx-font-weight: 600;
     -fx-text-fill: #e8d5b7;
 }
  
-.item-desc {
+.item-desc,
+.card-item-desc {
     -fx-font-family: "IM Fell English", "Georgia", serif;
     -fx-font-size: 12px;
     -fx-font-style: italic;
     -fx-text-fill: #6b5a5a;
 }
  
-.item-preco {
+.item-preco,
+.card-item-custo {
     -fx-font-family: "Share Tech Mono", "Courier New", monospace;
     -fx-font-size: 13px;
     -fx-text-fill: #cc2222;
 }
- 
-/* ══════════════════════════════════════════════════════════════
-   TOOLTIP
-   ══════════════════════════════════════════════════════════════ */
+
  
 .tooltip {
     -fx-background-color: #120808;
@@ -510,10 +541,7 @@
     -fx-padding: 6 10 6 10;
     -fx-effect: dropshadow(gaussian, #00000099, 8, 0.5, 0, 2);
 }
- 
-/* ══════════════════════════════════════════════════════════════
-   CONTEXT MENU / MENU ITEMS
-   ══════════════════════════════════════════════════════════════ */
+
  
 .context-menu {
     -fx-background-color: #120808;
@@ -529,10 +557,7 @@
 .menu-item:hover {
     -fx-background-color: #1a0808;
 }
- 
-/* ══════════════════════════════════════════════════════════════
-   FOCUS (acessibilidade)
-   ══════════════════════════════════════════════════════════════ */
+
  
 .button:focused,
 .text-field:focused,
@@ -541,4 +566,3 @@
     -fx-focus-color: #8b0000;
     -fx-faint-focus-color: #8b000022;
 }
- 

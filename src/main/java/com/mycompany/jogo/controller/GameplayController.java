@@ -175,30 +175,31 @@ public class GameplayController implements Initializable {
 
     //Inicialização 
     private void tentarIniciar() {
+        if (inicializado) return;
+
         double W = canvasArena.getWidth();
         double H = canvasArena.getHeight();
 
         if (W > 0 && H > 0) {
-            if (!inicializado) {
-                inicializado = true;
-                posicionarJogador();
-                gerarInimigos();
-                atualizarHUD();
-                atualizarLabelFase();
-                iniciarGameLoop();
-                canvasArena.requestFocus();
-            }
-        
+            inicializado = true;
+            posicionarJogador();
+            gerarInimigos();
+            atualizarHUD();
+            atualizarLabelFase();
+            iniciarGameLoop();
+            canvasArena.requestFocus();
+        } else {
+            Platform.runLater(this::tentarIniciar);
         }
     }
 
     //Carregamento de imagens 
     private void carregarImagens() {
         // Jogador
-        imgJogador         = carregarImagem("jogador.png");
+        imgJogador         = carregarImagem("Jogador.png");
         imgJogadorFrente   = carregarImagem("frente.png");
         imgJogadorTras     = carregarImagem("tras.png");
-        imgJogadorEsquerda = carregarImagem("esquerda.png");
+        imgJogadorEsquerda = carregarImagem("Esquerda.png");
 
         sheetAndando         = carregarImagem("andando.png");
         sheetAndandoEsquerda = carregarImagem("andando-esquerda.png");

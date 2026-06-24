@@ -142,7 +142,10 @@ public class BossController implements Initializable {
         carregarImagens();
 
         jogadorSprite  = criarImageView(imgJogador,  JOG_SPRITE_W,  JOG_SPRITE_H);
-        bossSprite     = criarImageView(imgBoss,     BOSS_SPRITE_W, BOSS_SPRITE_H);
+        bossSprite     = criarImageView(null,        BOSS_SPRITE_W, BOSS_SPRITE_H);
+        if (animBossAndarFrente != null) {
+            animBossAndarFrente.atualizar(0, bossSprite);
+        }
 
         spritePane.getChildren().add(jogadorSprite);
         spritePane.getChildren().add(bossSprite);
@@ -187,15 +190,19 @@ public class BossController implements Initializable {
     }
 
     private void tentarIniciar() {
+        if (inicializado) return;
+
         double W = canvasBoss.getWidth();
         double H = canvasBoss.getHeight();
-        if (W > 0 && H > 0 && !inicializado) {
+        if (W > 0 && H > 0) {
             inicializado = true;
             posicionarPersonagens(W, H);
             posicionarSprite(jogadorSprite, jogX,  jogY,  JOG_SPRITE_W,  JOG_SPRITE_H);
             posicionarSprite(bossSprite,    bossX, bossY, BOSS_SPRITE_W, BOSS_SPRITE_H);
             iniciarLoop();
             canvasBoss.requestFocus();
+        } else {
+            Platform.runLater(this::tentarIniciar);
         }
     }
 
@@ -210,10 +217,10 @@ public class BossController implements Initializable {
     //Carregamento de imagens
     private void carregarImagens() {
         // Imagens estáticas do jogador
-        imgJogador         = carregarImagem("jogador.png");
+        imgJogador         = carregarImagem("Jogador.png");
         imgJogadorFrente   = carregarImagem("frente.png");
         imgJogadorTras     = carregarImagem("tras.png");
-        imgJogadorEsquerda = carregarImagem("esquerda.png");
+        imgJogadorEsquerda = carregarImagem("Esquerda.png");
 
         // Spritesheets do jogador
         sheetAndando         = carregarImagem("andando.png");
@@ -235,7 +242,7 @@ public class BossController implements Initializable {
         }
 
         
-        imgBoss = carregarImagem("boss.png");
+        imgBoss = null;
 
         
         sheetBossAndarFrente   = carregarImagem("BossAndarFrente.png");
@@ -593,9 +600,10 @@ public class BossController implements Initializable {
         painelResultado.setVisible(true);
     }
 
-    @FXML private void onContinuarAposResultado() throws IOException {
+   @FXML private void onContinuarAposResultado() throws IOException {
         if (jogador().estaVivo()) App.setRoot("Ranking");
         else {
+            jogador().restaurarVida();
             Sessao.getInstance().iniciarNovaRun();
             App.setRoot("Boss");
         }

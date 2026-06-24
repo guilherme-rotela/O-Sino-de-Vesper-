@@ -109,6 +109,6 @@ public class RankingController implements Initializable {
 
     @FXML 
     private void onVoltar() throws IOException { 
-        App.setRoot("menu");
+        App.setRoot("Menu");
     }
 }
