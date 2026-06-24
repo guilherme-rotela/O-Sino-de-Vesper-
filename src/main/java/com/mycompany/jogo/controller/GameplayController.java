@@ -188,10 +188,7 @@ public class GameplayController implements Initializable {
                 iniciarGameLoop();
                 canvasArena.requestFocus();
             }
-        } else {
-            canvasArena.widthProperty().addListener((obs, oldVal, newVal) -> {
-                if (newVal.doubleValue() > 0 && !inicializado) tentarIniciar();
-            });
+        
         }
     }
 
@@ -536,10 +533,27 @@ public class GameplayController implements Initializable {
     }
 
     private void bindAoStackPane(StackPane sp) {
-        canvasArena.widthProperty().bind(sp.widthProperty());
-        canvasArena.heightProperty().bind(sp.heightProperty());
-        spritePane.prefWidthProperty().bind(sp.widthProperty());
-        spritePane.prefHeightProperty().bind(sp.heightProperty());
+        // Canvas precisa ser redimensionado manualmente
+        sp.widthProperty().addListener((obs, old, novo) -> {
+            canvasArena.setWidth(novo.doubleValue());
+            spritePane.setPrefWidth(novo.doubleValue());
+            if (!inicializado) tentarIniciar();
+        });
+        sp.heightProperty().addListener((obs, old, novo) -> {
+            canvasArena.setHeight(novo.doubleValue());
+            spritePane.setPrefHeight(novo.doubleValue());
+            if (!inicializado) tentarIniciar();
+        });
+
+        // Aplicar tamanho atual se já existir
+        if (sp.getWidth() > 0)  {
+            canvasArena.setWidth(sp.getWidth());
+            spritePane.setPrefWidth(sp.getWidth());
+        }
+        if (sp.getHeight() > 0) {
+            canvasArena.setHeight(sp.getHeight());
+            spritePane.setPrefHeight(sp.getHeight());
+        }
     }
 
     private void renderizar(long agora) {

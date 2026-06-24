@@ -8,7 +8,7 @@ public class Conexao {
 
     private static final String URL  = "jdbc:postgresql://localhost:5432/Vesper";
     private static final String USER = "postgres";
-    private static final String PASS = "postgre";
+    private static final String PASS = "postgresql";
 
     private static Connection connection;
 

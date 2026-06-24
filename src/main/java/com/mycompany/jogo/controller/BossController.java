@@ -167,14 +167,22 @@ public class BossController implements Initializable {
     }
 
     private void bindAoStackPane(StackPane sp) {
-        canvasBoss.widthProperty().bind(sp.widthProperty());
-        canvasBoss.heightProperty().bind(sp.heightProperty());
-        spritePane.prefWidthProperty().bind(sp.widthProperty());
-        spritePane.prefHeightProperty().bind(sp.heightProperty());
+        // Tamanho atual (se já disponível)
+        if (sp.getWidth()  > 0) canvasBoss.setWidth(sp.getWidth());
+        if (sp.getHeight() > 0) canvasBoss.setHeight(sp.getHeight());
+        spritePane.setPrefWidth(sp.getWidth());
+        spritePane.setPrefHeight(sp.getHeight());
 
-
-        sp.widthProperty().addListener((obs, o, n) -> {
-            if (n.doubleValue() > 0 && !inicializado) tentarIniciar();
+        // Listeners para redimensionamento
+        sp.widthProperty().addListener((obs, old, novo) -> {
+            canvasBoss.setWidth(novo.doubleValue());
+            spritePane.setPrefWidth(novo.doubleValue());
+            if (!inicializado) tentarIniciar();
+        });
+        sp.heightProperty().addListener((obs, old, novo) -> {
+            canvasBoss.setHeight(novo.doubleValue());
+            spritePane.setPrefHeight(novo.doubleValue());
+            if (!inicializado) tentarIniciar();
         });
     }
 
